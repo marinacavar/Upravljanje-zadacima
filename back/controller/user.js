@@ -57,13 +57,69 @@ exports.create = (req, res) => {
 };
 
 exports.find = (req, res) => {
-    // Implementation for finding user
+    if(req.query.id){
+        const id=req.query.id;
+    
+        User.findById(id)
+        .then(data => {
+            if(!data){
+                res.status(404).send({message:"Not found user with id"+id})
+            }else{
+                res.send(data)
+            }
+        })
+        .catch(err => {
+            res.status(500).send({message:"Error retriving user with id"+id})
+        })
+
+    }else{
+        User.find()
+        .then(user => {
+           res.send(user)
+        })
+        .catch(err =>{
+            res.status(500).send({message: err.message || "Error occure while retriving user information"})
+       })
+
+    }
 };
 
 exports.update = (req, res) => {
-    // Implementation for updating user
+    if(!req.body){
+        return res.status(400).send({message:"Data can't be empty"})
+    }
+
+    const id=req.params.id;
+    User.findByIdAndUpdate(id,req.body,{useFindAndModify:false})
+    .then(data=>{
+        if(!data){
+            res.status(404).send({message:`Can't update user with ${id}`})
+        }else{
+            res.send(data)
+        }
+    })
+    .catch(err =>{
+        res.status(500).send({message: "Error Update user "})
+    })
 };
 
 exports.delete = (req, res) => {
-    // Implementation for deleting user
+    const id=req.params.id;
+
+    User.findByIdAndDelete(id)
+    .then(data => {
+        if(!data){
+            res.status(404).send({message: `Can't delete with ${id}.Check if your id is correct`})
+        }else{
+            res.send({
+                message:"User was deleted succesfully!"
+            })
+        }
+
+    })
+    .catch(err =>{
+        res.status(500).send({
+            message:"Couldn't delete user with id" + id
+        });
+    });
 };
