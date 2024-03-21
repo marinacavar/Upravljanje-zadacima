@@ -1,4 +1,4 @@
-const User = require('../models/user');
+var User = require('../models/user');
 const bcrypt = require('bcrypt');
 
 exports.create = (req, res) => {
@@ -6,7 +6,7 @@ exports.create = (req, res) => {
         res.status(400).send({ message: "Content can't be empty" });
         return;
     }
-
+   
     // Validating name format (first name and last name)
     const nameRegex = /^[a-zA-Z]+ [a-zA-Z]+$/;
     if (!nameRegex.test(req.body.name)) {
@@ -46,7 +46,7 @@ exports.create = (req, res) => {
         // Save the user to the database
         user.save()
             .then(data => {
-                res.send(data);
+                res.redirect('/add-user');
             })
             .catch(err => {
                 res.status(500).send({
@@ -102,24 +102,22 @@ exports.update = (req, res) => {
         res.status(500).send({message: "Error Update user "})
     })
 };
-
-exports.delete = (req, res) => {
+exports.delete = (req, res)=>{
     const id=req.params.id;
 
     User.findByIdAndDelete(id)
-    .then(data => {
-        if(!data){
-            res.status(404).send({message: `Can't delete with ${id}.Check if your id is correct`})
-        }else{
-            res.send({
-                message:"User was deleted succesfully!"
-            })
-        }
-
-    })
-    .catch(err =>{
-        res.status(500).send({
-            message:"Couldn't delete user with id" + id
+        .then(data => {
+            if(!data){
+                res.status(404).send({ message : `Cannot Delete with id ${id}. Maybe id is wrong`})
+            }else{
+                res.send({
+                    message : "User was deleted successfully!"
+                })
+            }
+        })
+        .catch(err =>{
+            res.status(500).send({
+                message: `Cannot Delete user with id ${id}.`
+            });
         });
-    });
-};
+}
