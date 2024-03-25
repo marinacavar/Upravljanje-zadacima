@@ -1,0 +1,30 @@
+<%- include('include/_header') %>
+<main id="site-main">
+    <div class="container">
+        <div class="box-nav d-flex justify-between">
+            <div class="filter"></div>
+            <a href="/"><i class="fas fa-angle-double-left"></i>All Users</a>
+        </div>
+        <div class="form-title text-center">
+            <h2 class="text-darks">Update User</h2>
+        </div>
+        <form  method="POST" id="update_user">
+            <div class="new_user">
+                <div class="form-group">
+                    <label for="username" class="text-light">Name:</label>
+                    <input type="hidden" name="id" value="<%=user._id%>">
+                    <input type="text" name="name" value="<%=user.username%>" placeholder="Jane Doe">
+                </div>
+                <div class="form-group">
+                    <label for="email" class="text-light">Email:</label>
+                    <input type="text" name="email" value="<%=user.email%>" placeholder="example@gmail.com">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn text-darks2 update">Save</button>
+                </div>
+            </div>
+        </form> 
+
+    </div>
+</main>
+<%- include('include/_footer') %>
