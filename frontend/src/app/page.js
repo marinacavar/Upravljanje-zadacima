@@ -5,10 +5,8 @@ import { MdLockOutline } from 'react-icons/md';
 import { useRouter } from "next/navigation";
 import { useState } from 'react';
 import axios from 'axios';
-<<<<<<< HEAD
 
-=======
->>>>>>> 76d43697a8dc330c16b68889d22830a098e88f2d
+
 
 export default function Home() {
   const router = useRouter();
