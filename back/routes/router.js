@@ -4,7 +4,7 @@ const controller = require('../controller/user');
 const axios = require('axios');
 
 route.get('/', (req,res) => {
-    axios.get('http://localhost:3000/api/users')
+    axios.get('http://localhost:3001/api/users')
     .then(function(response){
         console.log(response.data)
         res.render('index',{users: response.data});
@@ -21,7 +21,7 @@ route.get('/add-user', (req,res) => {
 })
 
 route.get('/update-user', (req,res) => {
-    axios.get("http://localhost:3000/api/users",{params: {id:req.query.id}})
+    axios.get("http://localhost:3001/api/users",{params: {id:req.query.id}})
     .then(function(userdata){
         res.render("update_user",{user:userdata.data})
     })
