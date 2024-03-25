@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { FaRegEnvelope } from 'react-icons/fa';
 import { MdLockOutline } from 'react-icons/md';
 import { AiOutlineUser } from 'react-icons/ai';
+import axios from 'axios';
 
 export default function SignUp() {
     const router = useRouter();
@@ -63,7 +64,15 @@ export default function SignUp() {
         e.preventDefault();
         if (validateForm()) {
             
-            router.push('/'); 
+            axios.post('http://localhost:3001/api/users', formData)
+            .then(response => {
+                console.log(response.data);
+                router.push('/');
+            })
+            .catch(error => {
+                console.error("signup error", error.response.data);
+            });
+
         }
     };
 

@@ -4,6 +4,7 @@ import { FaRegEnvelope } from "react-icons/fa";
 import { MdLockOutline } from 'react-icons/md';
 import { useRouter } from "next/navigation";
 import { useState } from 'react';
+import axios from 'axios';
 
 
 export default function Home() {
@@ -19,7 +20,16 @@ export default function Home() {
       alert("Please enter your email and password."); 
       return; 
     }
-    router.push('/auth/sign-in');
+    axios.post (' http://localhost:3001/login ', { email, password })
+      .then(response => {
+      console.log(response.data);
+      // Preusmjeravanje na nadzornu ploču ili početnu stranicu nakon uspješne prijave
+      router.push('/auth/sign-in');
+      })
+      .catch(error => {
+      console.error('Prijava nije uspjela:', error.response.data);
+      setError(error.response.data.message);
+      });
 
   }
 
