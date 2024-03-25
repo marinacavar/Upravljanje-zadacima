@@ -5,7 +5,10 @@ import { MdLockOutline } from 'react-icons/md';
 import { useRouter } from "next/navigation";
 import { useState } from 'react';
 import axios from 'axios';
+<<<<<<< HEAD
 
+=======
+>>>>>>> 76d43697a8dc330c16b68889d22830a098e88f2d
 
 export default function Home() {
   const router = useRouter();
@@ -20,6 +23,7 @@ export default function Home() {
       alert("Please enter your email and password."); 
       return; 
     }
+
     axios.post (' http://localhost:3001/login ', { email, password })
       .then(response => {
       console.log(response.data);
@@ -29,6 +33,17 @@ export default function Home() {
       .catch(error => {
       console.error('Prijava nije uspjela:', error.response.data);
       setError(error.response.data.message);
+      });
+    axios.post('http://localhost:3001/login', { email, password })
+      .then(response => {
+        console.log(response.data);
+        // Redirect to dashboard or homepage upon successful login
+        router.push('/auth/sign-in');
+      })
+      .catch(error => {
+        console.error('Login failed:', error.response.data);
+        setError(error.response.data.message);
+
       });
 
   }

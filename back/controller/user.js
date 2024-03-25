@@ -8,11 +8,11 @@ exports.create = (req, res) => {
     }
    
     // Validating name format (first name and last name)
-    const usernameRegex = /^[a-zA-Z]+ [a-zA-Z]+$/;
+   /* const usernameRegex = /^[a-zA-Z]+ [a-zA-Z]+$/;
     if (!usernameRegex.test(req.body.username)) {
         res.status(400).send({ message: "Name must contain first and last name separated by a space" });
         return;
-    }
+    }*/
 
     // Validating email format
     const emailRegex = /^[^\s@]+@gmail\.com$/;
