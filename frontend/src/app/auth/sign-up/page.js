@@ -65,15 +65,14 @@ export default function SignUp() {
         if (validateForm()) {
             
             axios.post('http://localhost:3001/api/users', formData)
-                .then(response => {
-                    // Handle successful signup
-                    console.log(response.data);
-                    router.push('/'); // Redirect to homepage or login page
-                })
-                .catch(error => {
-                    // Handle signup error
-                    console.error('Signup failed:', error.response.data);
-                });
+            .then(response => {
+                console.log(response.data);
+                router.push('/');
+            })
+            .catch(error => {
+                console.error("signup error", error.response.data);
+            });
+
         }
     };
 
