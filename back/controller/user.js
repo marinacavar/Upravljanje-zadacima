@@ -1,6 +1,8 @@
 var User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+
+
 exports.create = (req, res) => {
     if (!req.body) {
         res.status(400).send({ message: "Content can't be empty" });
@@ -15,9 +17,9 @@ exports.create = (req, res) => {
     }*/
 
     // Validating email format
-    const emailRegex = /^[^\s@]+@gmail\.com$/;
+    const emailRegex = /^[^\s@]+@mail\.com$/;
     if (!emailRegex.test(req.body.email)) {
-        res.status(400).send({ message: "Email must be in the format example@gmail.com" });
+        res.status(400).send({ message: "Email must be in the format example@mail.com" });
         return;
     }
 
@@ -59,7 +61,7 @@ exports.create = (req, res) => {
                 });
             });
     });
-};
+}; 
 
 
 exports.login = (req, res) => {
