@@ -1,24 +1,15 @@
 require('./config/db');
 require('dotenv').config();
-
 const express = require('express');
 const cors = require('cors');
-const morgan = require('morgan');
+const bodyParser = require('express').json;
+
 const app = express();
 const port = 3001;
 const path = require ('path');
-const bodyParser = require('express').json;
-
 
 app.use(bodyParser());
-app.use(morgan("tiny"));
-app.set("view engine", "ejs")
-app.use('/css', express.static(path.resolve(__dirname, "assets/css")))
-app.use('/js', express.static(path.resolve(__dirname, "assets/js")))
 app.use(cors())
-
-
-
 app.use('/',require('./routes/router'))
 
 app.listen(port, () => {

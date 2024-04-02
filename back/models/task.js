@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
-    task: {
+    tasks: {
         type: String,
         required:true
     },
@@ -11,8 +11,8 @@ var schema = new mongoose.Schema({
         
     },
     deadline: {
-        type:Date,
-        requires:true
+        type: String,
+        required:true
 
     },
     status: {
@@ -22,6 +22,7 @@ var schema = new mongoose.Schema({
     
 });
 
-const User = mongoose.model('User', schema);
+const Task = mongoose.model('Task', schema);
 
-module.exports = User;
+module.exports = Task;
+
