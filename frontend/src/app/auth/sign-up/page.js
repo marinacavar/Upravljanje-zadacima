@@ -1,78 +1,53 @@
-"use client"
-import { useState } from 'react';
+"use client";
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaRegEnvelope } from 'react-icons/fa';
-import { MdLockOutline } from 'react-icons/md';
+import { MdLockOutline, MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { AiOutlineUser } from 'react-icons/ai';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
 import axios from 'axios';
 
-export default function SignUp() {
+const schema = yup.object().shape({
+    username: yup.string()
+    .required('Please enter a username'),
+    email: yup.string()
+    .email('Please enter a valid email address')
+    .required('Email is required'),
+    password: yup
+    .string()
+    .min(8, 'Password must be at least 8 characters long')
+    .required('Password is required')
+});
+
+const SignUp = () => {
     const router = useRouter();
-
-    const [formData, setFormData] = useState({
-        username: '',
-        email: '',
-        password: ''
+    const { register, handleSubmit,formState: { errors, dirtyFields, isValid } } = useForm({
+        resolver: yupResolver(schema),
+        mode: 'onChange'
     });
 
-    const [errors, setErrors] = useState({
-        username: '',
-        email: '',
-        password: ''
-    });
+    useEffect(() => {
+        console.log('isValid', isValid);
+      }, [isValid]);
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
     };
 
-    const validateForm = () => {
-        let valid = true;
-        const newErrors = { ...errors };
-
-        // Validacija korisničkog imena
-        if (formData.username.trim() === '') {
-            newErrors.username = 'Please enter a username';
-            valid = false;
-        } else {
-            newErrors.username = '';
-        }
-
-        // Validacija email adrese
-        if (!formData.email.trim().includes('@')) {
-            newErrors.email = 'Please enter a valid email address';
-            valid = false;
-        } else {
-            newErrors.email = '';
-        }
-
-        // Validacija lozinke
-        if (formData.password.trim().length < 6) {
-            newErrors.password = 'Password must be at least 6 characters long';
-            valid = false;
-        } else {
-            newErrors.password = '';
-        }
-
-        setErrors(newErrors);
-        return valid;
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (validateForm()) {
-            
-            axios.post('http://localhost:3001/api/users', formData)
-            .then(response => {
-                console.log(response.data);
-                router.push('/');
-            })
-            .catch(error => {
-                console.error("signup error", error.response.data);
-            });
-
+    const submitForm = async (data) => {
+        console.log(data);
+        try {
+            const response = await axios.post('http://localhost:3001/api/users', data);
+            console.log(response.data);
+            router.push('/');
+            alert('Uspješno ste se registrirali!');
+        } catch (error) {
+            console.error("signup error", error.response.data);
         }
     };
 
@@ -88,31 +63,61 @@ export default function SignUp() {
                             <h2 className="text-2xl font-bold text-center text-blue-800">Create an Account</h2>
                             <div className="border-2 w-10 border-blue-800 mx-auto mb-2"></div>
 
-                            <div className="flex flex-col items-center">
+                            <form onSubmit={handleSubmit(submitForm)} className="flex flex-col items-center">
                                 <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3">
-                                    <AiOutlineUser className="text-gray-400 mr-2"/>
-                                    <input type="text" name="username" placeholder="Username" className="bg-gray-100 outline-none flex-1" onChange={handleChange} />
+                                    {AiOutlineUser && <AiOutlineUser className="text-gray-400 mr-2" />}
+                                    <input type="text" name="username" placeholder="Username" className="bg-gray-100 w-full lg:w-64" {...register("username")} />
                                 </div>
-                                {errors.username && <p className="text-red-500">{errors.username}</p>}
-                                
+                                <p className='error-message'>{dirtyFields.username && errors.username?.message}</p>
+
+                                 
+
                                 <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3">
-                                    <FaRegEnvelope className="text-gray-400 mr-2"/>
-                                    <input type="email" name="email" placeholder="Email" className="bg-gray-100 outline-none flex-1" onChange={handleChange} />
+                                    <FaRegEnvelope className="text-gray-400 mr-2" />
+                                    <input type="email" name="email" placeholder="Email" className="bg-gray-100 w-full lg:w-64"  {...register("email")} />
                                 </div>
-                                {errors.email && <p className="text-red-500">{errors.email}</p>}
+                                <p className="error-message">{dirtyFields.email && errors.email?.message}</p>
                                 
-                                <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3">
-                                    <MdLockOutline className="text-gray-400 mr-2"/>
-                                    <input type="password" name="password" placeholder="Password" className="bg-gray-100 outline-none flex-1" onChange={handleChange} />
+                                
+
+                                <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3 relative">
+                                    <div className="text-gray-400 mr-2">
+                                        <MdLockOutline />
+                                    </div>
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        name="password"
+                                        placeholder="Password"
+                                        className="bg-gray-100 w-full lg:w-64 "
+                                        {...register("password")}
+                                        
+                                    />
+                                    
+                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        {showPassword ? (
+                                            <MdVisibility
+                                                className="text-gray-400 cursor-pointer"
+                                                onClick={togglePasswordVisibility}
+                                            />
+                                        ) : (
+                                            <MdVisibilityOff
+                                                className="text-gray-400 cursor-pointer"
+                                                onClick={togglePasswordVisibility}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
-                                {errors.password && <p className="text-red-500">{errors.password}</p>}
+                                <p className='error-message'>{dirtyFields.password && errors.password?.message}</p>
                                 
-                                <button onClick={handleSubmit} className="border-2 border-blue-800 text-blue-800 px-12 py-2 rounded-full inline-block font-semibold hover:bg-blue-800 hover:text-white">Sign Up</button>
-                            </div>
+
+                                <button type="submit" className="border-2 border-blue-800 text-blue-800 px-12 py-2 rounded-full inline-block font-semibold hover:bg-blue-800 hover:text-white">Sign Up</button>
+                            </form>
                         </div>
                     </div>
                 </div>
-            </main> 
+            </main>
         </div>
     );
 }
+
+export default SignUp;
