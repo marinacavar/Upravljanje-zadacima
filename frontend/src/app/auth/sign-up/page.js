@@ -48,6 +48,12 @@ const SignUp = () => {
             alert('Uspješno ste se registrirali!');
         } catch (error) {
             console.error("signup error", error.response.data);
+            if (error.response.status === 400 && error.response.data.message === "User with this email already exists") {
+                alert('Korisnik s tom email adresom već postoji!');
+            } else {
+                // Handle other error cases
+                alert('Error occurred while registering. Please try again later.');
+            }
         }
     };
 
