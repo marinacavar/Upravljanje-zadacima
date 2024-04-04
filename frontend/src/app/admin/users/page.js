@@ -10,11 +10,13 @@
 // }
 // import AdminLayout from '../AdminLayout'
 import React from 'react'
+import Sidebar from '../sidebar';
 
 function Users() {
   return (
     
         <div>
+            <Sidebar/>
             <h1>Users</h1>
         </div>
     

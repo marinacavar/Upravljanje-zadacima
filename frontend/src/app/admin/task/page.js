@@ -1,11 +1,13 @@
 import React from 'react';
+import Sidebar from '../sidebar';
 // import AdminLayout from './AdminLayout';
 
 function TaskPage() {
     return (
         
         <div>
-            <h1>Task Page</h1>
+        <Sidebar/>
+            <h1></h1>
             
         </div>
         
