@@ -45,7 +45,7 @@ const Home = () => {
     try {
       const response = await axios.post('http://localhost:3001/login', data);
       console.log(response.data);
-      router.push('/auth/sign-in');
+      router.push('/home');
     } catch (error) {
       console.error("signup error", error.response.data);
     }

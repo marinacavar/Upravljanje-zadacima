@@ -10,7 +10,7 @@ exports.create = (req, res) => {
     }
 
     // Validating email format
-    const emailRegex = /^[^\s@]+@gmail\.com$/;
+    const emailRegex = /^[^\s@]/;
     if (!emailRegex.test(req.body.email)) {
         res.status(400).send({ message: "Email must be in the format example@mail.com" });
         return;
@@ -90,7 +90,7 @@ exports.login = (req, res) => {
                 }
 
                 // Create JWT token
-                const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+                const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, {
                     expiresIn: '1h' // Token expires in 1 hour
                 });
                 //res.status(201).send({ message: "Logged in", email,  token });
