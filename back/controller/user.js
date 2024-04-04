@@ -175,9 +175,5 @@ exports.delete = (req, res)=>{
         });
 }
 
-exports.logout = (req, res) => {
-    res.status(200).send({ message: "Logged out successfully" });
-};
-
 
 

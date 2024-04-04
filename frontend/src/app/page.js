@@ -8,18 +8,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import axios from 'axios';
-
 const schema = yup.object().shape({
   email: yup
-  .string()
-  .required('Email is required')
-  .email('Please enter a valid email address'),
-  
+    .string()
+    .required('Email is required')
+    .email('Please enter a valid email address'),
   password: yup
-  .string()
-  .required('Password is required')
-  .min(8, 'Password must be at least 8 characters long')
-  
+    .string()
+    .required('Password is required')
+    .min(8, 'Password must be at least 8 characters long')
 });
 
 const Home = () => {
@@ -33,7 +30,6 @@ const Home = () => {
     console.log('isValid', isValid);
   }, [isValid]);
 
-
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -45,6 +41,8 @@ const Home = () => {
     try {
       const response = await axios.post('http://localhost:3001/login', data);
       console.log(response.data);
+      // Store token in local storage
+      localStorage.setItem('token', response.data.token);
       router.push('/home');
     } catch (error) {
       console.error("signup error", error.response.data);
@@ -54,6 +52,8 @@ const Home = () => {
   const goToSignUp = () => {
     router.push('/auth/sign-up');
   }
+
+
 
   return (
     <div className="flex flex-col justify-center min-h-screen py-2 bg-gray-100">

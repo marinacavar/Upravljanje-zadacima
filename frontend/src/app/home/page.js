@@ -1,14 +1,28 @@
 "use client"
-import { Disclosure } from '@headlessui/react'
-import React, {useState} from 'react'
+import { Disclosure } from '@headlessui/react';
+import React from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi'
-// import icons from react-icons
-import {MdOutlineSpaceDashboard } from "react-icons/md";
+import { useRouter } from 'next/navigation';
+
+// Import icons from react-icons
+import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import { FaTasks } from "react-icons/fa";
-
-
 export default function Sidebar() {
+  const router = useRouter();
+
+  // Function to handle logout
+  const handleLogout = () => {
+    // Remove token from local storage
+    localStorage.removeItem('token');
+    // Clear browsing history to prevent going back to home page after logout
+    window.history.replaceState({}, document.title, '/');
+
+    // Redirect to sign-in page
+    router.push('/');
+  };
+
+
    return (
     <div>
     <Disclosure as= "nav">
@@ -44,13 +58,18 @@ export default function Sidebar() {
 
            {/* logout */}
            <div className="absolute bottom-5 left-13 flex items-center justify-center">
-              <div className="flex mb-2 justify-start items-center gap-4 pl-5 border border-gray-200  hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto">
-                <CgLogOut className="text-2xl text-blue-700 group-hover:text-white " />
-                <h3 className="text-base text-blue-900 group-hover:text-white font-semibold ">
-                  Logout
-                </h3>
-              </div>
-            </div>
+           <div
+                        onClick={handleLogout} // Call handleLogout function on click
+                        className="flex mb-2 justify-start items-center gap-4 pl-5 border border-gray-200 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto"
+                    >
+                        <CgLogOut className="text-2xl text-blue-700 group-hover:text-white " />
+                        <h3 className="text-base text-blue-900 group-hover:text-white font-semibold ">
+                            Logout
+                        </h3>
+                    </div>
+          
+          
+          </div>
             
         </div>
       </div>

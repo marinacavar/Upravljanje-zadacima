@@ -8,7 +8,6 @@ import { CgProfile, CgLogOut } from "react-icons/cg";
 import { FaUsers } from "react-icons/fa6";
 import { FaTasks } from "react-icons/fa";
 
-
 export default function Sidebar() {
    return (
     <div>
@@ -62,5 +61,3 @@ export default function Sidebar() {
     </div>
   )
 }
-
-
