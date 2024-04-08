@@ -7,7 +7,7 @@ function AdminPanel() {
         <div>
           <Sidebar/>
 
-            <h1>Users</h1>
+            
         </div>
     
   )
