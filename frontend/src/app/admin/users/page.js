@@ -93,6 +93,16 @@ const Users = () => {
         setCurrentPreviewedUser(user);
         setIsPreviewModalOpen(true);
     };
+
+    const handleDeleteClick = async (id) => {
+        try {
+            await axios.delete(`http://localhost:3001/api/users/${id}`);
+            fetchUsers(); 
+        } catch (error) {
+            console.error('Error deleting user:', error);
+        }
+    };
+    
     
     
   
@@ -252,7 +262,7 @@ const Users = () => {
                                                                 <li>
                                                                     <button
                                                                         className="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-600"
-                                                                        onClick={() => handleDeleteClick(user)}
+                                                                        onClick={() => handleDeleteClick(user._id)}
                                                                     >
                                                                         <RiDeleteBin5Fill className="w-4 h-4 mr-2" />
                                                                         Delete
