@@ -3,7 +3,7 @@
 import React from 'react'
 import Sidebar from '../sidebar';
 import { useState } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { FaEdit } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import { RiDeleteBin5Fill } from "react-icons/ri";
@@ -11,7 +11,7 @@ import axios from 'axios';
 
 
 const Users = () => {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
@@ -19,10 +19,17 @@ const Users = () => {
     const [users, setUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(10);
+    const [openDropdowns, setOpenDropdowns] = useState(Array(users.length).fill(false));
+    const dropdownRefs = useRef([]);
+
     
 
     useEffect(() => {
         fetchUsers();
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, []);
 
     const fetchUsers = async () => {
@@ -38,16 +45,34 @@ const Users = () => {
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
     const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
-    // Change page
+    
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    const toggleDropdown = (index) => {
+        setOpenDropdowns((prevState) => {
+            const updatedDropdowns = [...prevState];
+            updatedDropdowns[index] = !updatedDropdowns[index];
+            return updatedDropdowns;
+        });
+    };
+
+    const handleClickOutside = (event) => {
+        dropdownRefs.current.forEach((ref, index) => {
+            if (ref && !ref.contains(event.target)) {
+                setOpenDropdowns((prevState) => {
+                    const updatedDropdowns = [...prevState];
+                    updatedDropdowns[index] = false;
+                    return updatedDropdowns;
+                });
+            }
+        });
+    };
+    
+
     
 
 
 
-    const toggleDropdown = () => {
-        console.log('Dropdown toggled')
-        setIsDropdownOpen(!isDropdownOpen);
-    };
 
 //  user add
     
@@ -179,16 +204,18 @@ const Users = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {currentUsers.map((user) => (
+                                        {currentUsers.map((user, index) => (
                                             <tr key={user.id} className="border-b dark:border-gray-700">
                                                 <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.username}</td>
                                                 <td className="px-4 py-3">{user.email}</td>
                                                 {/* <td className="px-4 py-3">{user.password}</td> */}
-                                                <td className="px-4 py-3 flex items-center justify-end">
+                                                <td className="px-4 py-3 flex items-center justify-end" ref={(el) => (dropdownRefs.current[index] = el)}>
+                            
+                                        
                                                     <button
                                                         className="inline-flex items-center text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 dark:hover-bg-gray-800"
                                                         type="button"
-                                                        onClick={toggleDropdown}
+                                                        onClick={() => toggleDropdown(index)}
                                                     >
                                                         <svg
                                                             className="w-5 h-5"
@@ -201,7 +228,7 @@ const Users = () => {
                                                         </svg>
                                                     </button>
                                                     {/* Dropdown content */}
-                                                    {isDropdownOpen && (
+                                                    {openDropdowns[index] && (
                                                         <div id="dropdown" className="absolute z-10 bg-white rounded shadow dark:bg-gray-700">
                                                             <ul className="py-1 text-x" aria-labelledby="dropdown-button">
                                                                 <li>
