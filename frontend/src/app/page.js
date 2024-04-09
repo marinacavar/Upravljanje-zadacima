@@ -39,15 +39,21 @@ const Home = () => {
   const submitForm = async (data) => {
     console.log(data);
     try {
-      const response = await axios.post('http://localhost:3001/login', data);
-      console.log(response.data);
-      // Store token in local storage
-      localStorage.setItem('token', response.data.token);
-      router.push('/home');
+        const response = await axios.post('http://localhost:3001/login', data);
+        console.log(response.data);
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('role', response.data.role);
+        if (response.data.role === 'admin') {
+            router.push('/admin');
+        } else {
+            router.push('/home');
+        }
     } catch (error) {
-      console.error("signup error", error.response.data);
+        console.error("login error", error.response.data);
     }
-  };
+};
+
+
 
   const goToSignUp = () => {
     router.push('/auth/sign-up');

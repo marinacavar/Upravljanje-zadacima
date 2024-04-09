@@ -9,14 +9,14 @@ exports.create = (req, res) => {
         return;
     }
 
-    // Validating email format
+    
     const emailRegex = /^[^\s@]/;
     if (!emailRegex.test(req.body.email)) {
         res.status(400).send({ message: "Email must be in the format example@mail.com" });
         return;
     }
 
-    // Check if user with the provided email already exists
+   
     User.findOne({ email: req.body.email })
         .then(existingUser => {
             if (existingUser) {
@@ -25,13 +25,13 @@ exports.create = (req, res) => {
                 return;
             }
 
-            // Validating password length
+           
             if (req.body.password.length < 8) {
                 res.status(400).send({ message: "Password must be at least 8 characters long" });
                 return;
             }
 
-            // Hash the password
+            
             bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
                 if (err) {
                     res.status(500).send({
@@ -40,19 +40,18 @@ exports.create = (req, res) => {
                     return;
                 }
 
-                // Create a new user instance with hashed password
                 const user = new User({
                     username: req.body.username,
                     email: req.body.email,
                     password: hashedPassword
                 });
 
-                // Save the user to the database
+                
                 user.save()
                     .then(data => {
-                        // Generate JWT token for the registered user
+                        
                         const token = jwt.sign({ id: data._id }, process.env.JWT_SECRET, {
-                            expiresIn: '1h' // Token expires in 1 hour
+                            expiresIn: '1h' 
                         });
 
                         res.status(201).send({ message: "User registered successfully", token });
@@ -72,39 +71,35 @@ exports.create = (req, res) => {
 };
 
 
-
 exports.login = (req, res) => {
     const { email, password } = req.body;
 
-    // Find user by email
+    
     User.findOne({ email })
         .then(user => {
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }
 
-            // Check password
+            
             bcrypt.compare(password, user.password, (err, result) => {
                 if (err || !result) {
                     return res.status(401).send({ message: "Invalid email or password" });
                 }
 
-                // Create JWT token
-                const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, {
-                    expiresIn: '1h' // Token expires in 1 hour
+                
+                const token = jwt.sign({ username: user.username, role: user.role }, process.env.JWT_SECRET, {
+                    expiresIn: '1h' 
                 });
-                //res.status(201).send({ message: "Logged in", email,  token });
-                res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).json({token});
 
-
-               
+                
+                res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).json({ token, role: user.role });
             });
         })
         .catch(err => {
             res.status(500).send({ message: "Error occurred while logging in" });
         });
 };
-
 
 
 exports.find = (req, res) => {
