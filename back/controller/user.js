@@ -101,6 +101,22 @@ exports.login = (req, res) => {
         });
 };
 
+exports.authenticateToken = (req, res, next) => {
+    const token = req.cookies.jwt;
+
+    if (!token) {
+        return res.status(401).send({ message: "Unauthorized" });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
+        if (err) {
+            return res.status(403).send({ message: "Invalid token" });
+        }
+        req.userId = decodedToken.userId;
+        next();
+    });
+};
+
 
 exports.find = (req, res) => {
     if(req.query.id){
