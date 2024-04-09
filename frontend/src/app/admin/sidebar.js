@@ -1,6 +1,7 @@
 "use client";
 import { Disclosure } from '@headlessui/react';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { CgProfile, CgLogOut } from "react-icons/cg";
@@ -8,7 +9,14 @@ import { FaUsers } from "react-icons/fa";
 import { FaTasks } from "react-icons/fa";
 import Link from 'next/link';
 
+
 export default function Sidebar({ isVisible, toggleSidebar }) {
+  const router = useRouter();
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.history.replaceState({}, document.title, '/');
+    router.push('/');
+  }
   return (
     <div>
       <Disclosure as="nav">
@@ -46,15 +54,17 @@ export default function Sidebar({ isVisible, toggleSidebar }) {
               </Link>
             </div>
 
-            {/* logout */}
             <div className="absolute bottom-5 left-13 flex items-center justify-center">
-              <div className="flex mb-2 justify-start items-center gap-4 pl-5 border border-gray-200 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg">
-                <CgLogOut className="text-2xl text-blue-700 group-hover:text-white " />
-                <h3 className="text-base text-blue-900 group-hover:text-white font-semibold ">
-                  Logout
-                </h3>
-              </div>
+            <div
+              onClick={handleLogout} 
+              className="flex mb-2 justify-start items-center gap-4 pl-5 border border-gray-200 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto"
+            >
+              <CgLogOut className="text-2xl text-blue-700 group-hover:text-white " />
+              <h3 className="text-base text-blue-900 group-hover:text-white font-semibold ">
+                Logout
+              </h3>
             </div>
+            </div>      
           </div>
         </Disclosure.Panel>
       </Disclosure>

@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+
 import axios from 'axios';
 const schema = yup.object().shape({
   email: yup
@@ -24,6 +25,7 @@ const Home = () => {
   const { register, handleSubmit, formState: { errors, dirtyFields, isValid } } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
+  
   });
 
   useEffect(() => {
@@ -131,6 +133,8 @@ const Home = () => {
         </div>
       </main>
     </div>
+
+
   );
 }
 

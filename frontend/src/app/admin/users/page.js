@@ -21,16 +21,16 @@ const Users = () => {
     const [usersPerPage] = useState(10);
     const [openDropdowns, setOpenDropdowns] = useState(Array(users.length).fill(false));
     const dropdownRefs = useRef([]);
-
     
 
     useEffect(() => {
-        fetchUsers();
+        fetchUsers(); 
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+          document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
+      }, []);
+
 
     const fetchUsers = async () => {
         try {
@@ -109,14 +109,6 @@ const Users = () => {
                 });
         }
     };
-    
-
-    
-    
-    
-  
-
-  
   
   return (
     <div className='flex'>
