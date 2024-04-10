@@ -46,21 +46,16 @@ exports.create = (req, res) => {
                     password: hashedPassword
                 });
 
-                
                 user.save()
-                    .then(data => {
-                        
-                        const token = jwt.sign({ id: data._id }, process.env.JWT_SECRET, {
-                            expiresIn: '1h' 
-                        });
+                 .then(data => {
+                    res.send(data);
+                 })
+                 .catch(err => {
+                    res.status(500).send({
+                     message: err.message || "Some error occurred creating user"
+               });
+           });
 
-                        res.status(201).send({ message: "User registered successfully", token });
-                    })
-                    .catch(err => {
-                        res.status(500).send({
-                            message: err.message || "Some error occurred creating user"
-                        });
-                    });
             });
         })
         .catch(err => {

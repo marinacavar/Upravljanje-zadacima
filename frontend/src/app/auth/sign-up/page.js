@@ -7,7 +7,6 @@ import { AiOutlineUser } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-
 import axios from 'axios';
 
 const schema = yup.object().shape({
