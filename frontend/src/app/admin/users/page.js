@@ -7,12 +7,13 @@ import { useEffect, useRef } from 'react';
 import { FaEdit } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+
 import axios from 'axios';
 
 
 const Users = () => {
     
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const [currentPreviewedUser, setCurrentPreviewedUser] = useState(null);
@@ -21,6 +22,9 @@ const Users = () => {
     const [usersPerPage] = useState(10);
     const [openDropdowns, setOpenDropdowns] = useState(Array(users.length).fill(false));
     const dropdownRefs = useRef([]);
+    // update
+    const [updatedUser, setUpdatedUser] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState(false);
     
 
     useEffect(() => {
@@ -70,10 +74,6 @@ const Users = () => {
     
 
     
-
-
-
-
 //  user add
 
 const handleSubmit = async (event) => {
@@ -95,24 +95,46 @@ const handleSubmit = async (event) => {
         const response = await axios.post('http://localhost:3001/api/users', userData);
         console.log('User added:', response.data);
         fetchUsers(); // Fetch updated user list
-        setIsModalOpen(false); // Close the modal after successful user addition
+        setIsAddModalOpen(false); // Close the modal after successful user addition
     } catch (error) {
         console.error('Error adding user:', error);
     }
 };
 
     const handleModalToggle = () => {
-        setIsModalOpen(!isModalOpen);
+        setIsAddModalOpen(!isAddModalOpen);
     };
 
 
 
     //edit
+    
 
     const handleEditClick = (user) => {
-        setCurrentUser(user); // Postavite trenutnog korisnika u stanje
-        // setIsModalOpen(true); // Otvorite modal za uređivanje
+        console.log("Edit button clicked, user:", user); 
+        setCurrentUser(user); // Postavljanje trenutnog korisnika u stanje
+        setUpdatedUser(user); // Postavljanje ažuriranog korisnika
+        setIsModalOpen(true); // Otvaranje modal-a za uređivanje
+        
     };
+    
+
+    const handleInputChange = (event) => {
+        setUpdatedUser({
+          ...updatedUser,
+          [event.target.name]: event.target.value
+        });
+      }
+    
+      const handleUpdate = async () => {
+        try {
+            const response = await axios.put(`http://localhost:3001/api/users/${currentUser.id}`, updatedUser);
+            // Update the local state with the updated user
+            setUsers(users.map(user => user.id === currentUser.id ? response.data : user));
+        } catch (error) {
+            console.error('Failed to update user:', error);
+        }
+    }
     
     //read
 
@@ -166,8 +188,8 @@ const handleSubmit = async (event) => {
                                         type="button"
                                         id="createProductModalButton"
                                         className="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md py-2 px-4"
-                                        onClick={handleModalToggle}
-                                    >
+                                        onClick={handleModalToggle}>
+
                                         <svg className="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                             <path clipRule="evenodd" fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                                         </svg>
@@ -262,8 +284,7 @@ const handleSubmit = async (event) => {
                                                                 </button>
                                                             </li>
                                                             <li>
-                                                                <button
-                                                                    className="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                                <button className="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                                                     onClick={() => handlePreviewClick(user)}
                                                                 >
                                                                     <FaEye className="w-4 h-4 mr-2" />
@@ -271,10 +292,8 @@ const handleSubmit = async (event) => {
                                                                 </button>
                                                             </li>
                                                             <li>
-                                                                <button
-                                                                    className="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-600"
-                                                                    onClick={() => handleDeleteClick(user._id)}
-                                                                >
+                                                                <button className="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-600"
+                                                                    onClick={() => handleDeleteClick(user._id)} >
                                                                     <RiDeleteBin5Fill className="w-4 h-4 mr-2" />
                                                                     Delete
                                                                 </button>
@@ -311,16 +330,9 @@ const handleSubmit = async (event) => {
                     </div>
                 </div>
             </section>
- 
+                                    
 
-
- 
- 
- 
- 
- 
-
-  {isModalOpen && (
+  {isAddModalOpen && (
         <div id="createProductModal" className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden flex justify-center items-center bg-gray-300 bg-opacity-75">
             {/* <!-- Modal content --> */}
             <div className="relative p-4 bg-white rounded-lg shadow sm:p-5">
@@ -367,55 +379,68 @@ const handleSubmit = async (event) => {
 
 
 {/* <!-- Update modal --> */}
-<div id="updateProductModal" className={`hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50 ${isModalOpen ? '' : 'hidden'}`}>
-    <div className="relative p-4 w-full max-w-2xl">
-        {/* <!-- Modal content --> */}
-        
-        <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-            {/* <!-- Modal header --> */}
-            <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Update Product</h3>
-                <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="updateProductModal">
-                    <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                    <span className="sr-only">Close modal</span>
-                </button>
-            </div>
-            {/* <!-- Modal body --> */}
-            {currentUser && (
-            <form action="#">
-                <div className="grid gap-4 mb-4 sm:grid-cols-2">
-                    <div>
-                        <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                        <input type="text" name="name" id="name" defaultValue={currentUser.name} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Ex. Admin"/>
-                    </div>
-                    <div>
-                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                        <input type="text" name="email" id="email" defaultValue={currentUser.email} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Ex. admin@gmail.com"/>
-                    </div>
-                     <div> 
-                         <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label> 
-                         <input type="password" name="password" id="password"defaultValue={currentUser.password} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="12345678"/> 
-                     </div> 
-                    
-                </div>
-                <div className="flex items-center space-x-4">
-                    <button type="submit" className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Update product</button>
-                    <button type="button" className="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
-                        <svg className="mr-1 -ml-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+{isModalOpen && (
+    
+    <div id="updateProductModal" className={`${isModalOpen ? '' : 'hidden'} fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50`}>
+
+        <div className="relative p-4 w-full max-w-2xl">
+            {/* <!-- Modal content --> */}
+            
+            <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+                {/* <!-- Modal header --> */}
+                <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-blue-600">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Update Product</h3>
+                    <button type="button" onClick={() => setIsModalOpen(false)} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
+
+                        <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                         </svg>
-                        Delete
+                        <span className="sr-only">Close modal</span>
                     </button>
                 </div>
-            </form>
-            )}
+                {/* <!-- Modal body --> */}
+                {currentUser && (
+                <form action="#" onSubmit={(e) => { e.preventDefault(); handleUpdate(); }}>
+                    <div className="grid gap-4 mb-4 sm:grid-cols-2">
+                        <div>
+                            <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                            <input type="text" 
+                            name="username" 
+                            id="username"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            value={updatedUser.username} onChange={handleInputChange}
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                            <input type="text" name="email" id="email" value={updatedUser.email} onChange={handleInputChange}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
+                            />
+                        </div>
+                        <div> 
+                            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label> 
+                            <input type="password" name="password" id="password"defaultValue={currentUser.password} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="12345678"/> 
+                        </div> 
+                        
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blues-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Update User</button>
+                        <button type="button" className="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
+                            <svg className="mr-1 -ml-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                            Delete
+                        </button>
+                    </div>
+                </form>
+                )}
+            </div>
         </div>
     </div>
-</div>
+    
+  )}
 {/* <!-- Read modal --> */}
-<div id="readProductModal" className={`hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50 ${isPreviewModalOpen ? '' : 'hidden'}`}>
+<div id="readProductModal" className="hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
     <div className="relative p-4 w-full max-w-xl">
         <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
             <div className="flex justify-between mb-4 rounded-t sm:mb-5">
@@ -484,7 +509,7 @@ const handleSubmit = async (event) => {
     </div>
             </div>*/}
 </div> 
-  )
+    );
 }
 
 export default Users;
