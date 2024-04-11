@@ -120,17 +120,30 @@ const handleSubmit = async (event) => {
     
 
     const handleInputChange = (event) => {
+        // Prikazivanje naziva i vrijednosti ciljnog elementa
+        console.log("Naziv svojstva:", event.target.name);
+        console.log("Vrijednost svojstva:", event.target.value);
+    
+        // Prikazivanje trenutnog stanja updatedUser prije ažuriranja
+        console.log("Prije ažuriranja, updatedUser:", updatedUser);
+    
+        // Ažuriranje updatedUser
         setUpdatedUser({
-          ...updatedUser,
-          [event.target.name]: event.target.value
+            ...updatedUser,
+            [event.target.name]: event.target.value
         });
-      }
+    
+        // Prikazivanje trenutnog stanja updatedUser nakon ažuriranja
+        console.log("Nakon ažuriranja, updatedUser:", updatedUser);
+    };
+    
     
       const handleUpdate = async () => {
         try {
-            const response = await axios.put(`http://localhost:3001/api/users/${currentUser.id}`, updatedUser);
+            const response = await axios.put(`http://localhost:3001/api/users/${currentUser._id}`, updatedUser);
             // Update the local state with the updated user
-            setUsers(users.map(user => user.id === currentUser.id ? response.data : user));
+            setUsers(users.map(user => user._id === currentUser._id ? response.data : user));
+            setIsModalOpen(false);
         } catch (error) {
             console.error('Failed to update user:', error);
         }
