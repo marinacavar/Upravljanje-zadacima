@@ -22,9 +22,11 @@ const Users = () => {
     const [usersPerPage] = useState(10);
     const [openDropdowns, setOpenDropdowns] = useState(Array(users.length).fill(false));
     const dropdownRefs = useRef([]);
+    const [addSuccessMessage, setAddSuccessMessage] = useState('');
     // update
     const [updatedUser, setUpdatedUser] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [updateSuccessMessage, setUpdateSuccessMessage] = useState('');
     
 
     useEffect(() => {
@@ -96,6 +98,10 @@ const handleSubmit = async (event) => {
         console.log('User added:', response.data);
         fetchUsers(); // Fetch updated user list
         setIsAddModalOpen(false); // Close the modal after successful user addition
+        setAddSuccessMessage('User created successfully!');
+        setTimeout(() => {
+            setAddSuccessMessage('');
+        }, 5000);
     } catch (error) {
         console.error('Error adding user:', error);
     }
@@ -144,6 +150,10 @@ const handleSubmit = async (event) => {
             // Update the local state with the updated user
             setUsers(users.map(user => user._id === currentUser._id ? response.data : user));
             setIsModalOpen(false);
+            setUpdateSuccessMessage('User updated successfully!');
+            setTimeout(() => {
+                setUpdateSuccessMessage('');
+            }, 5000);
         } catch (error) {
             console.error('Failed to update user:', error);
         }
@@ -389,6 +399,13 @@ const handleSubmit = async (event) => {
             </div>
         </div>
     )}
+     <div>
+       {addSuccessMessage && (
+           <div className="fixed top-0 right-0 mt-4 mr-4 bg-green-500 text-white px-4 py-2 rounded">
+               {addSuccessMessage}
+           </div>
+       )}
+   </div>
 
 
 {/* <!-- Update modal --> */}
@@ -454,6 +471,13 @@ const handleSubmit = async (event) => {
     </div>
     
   )}
+  <div>
+        {updateSuccessMessage && (
+            <div className="fixed top-0 right-0 mt-4 mr-4 bg-green-500 text-white px-4 py-2 rounded">
+                {updateSuccessMessage}
+            </div>
+        )}
+    </div>
 {/* <!-- Read modal --> */}
 <div id="readProductModal" className="hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
     <div className="relative p-4 w-full max-w-xl">
