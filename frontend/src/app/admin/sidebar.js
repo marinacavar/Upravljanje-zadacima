@@ -1,6 +1,7 @@
 "use client";
+"use client";
 import { Disclosure } from '@headlessui/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { MdOutlineSpaceDashboard } from "react-icons/md";
@@ -12,8 +13,18 @@ import Link from 'next/link';
 
 export default function Sidebar({ isVisible, toggleSidebar }) {
   const router = useRouter();
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('username');
+    setUsername(storedUsername);
+  }, []);
+
+
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('username');
     window.history.replaceState({}, document.title, '/');
     router.push('/');
   }
@@ -37,7 +48,7 @@ export default function Sidebar({ isVisible, toggleSidebar }) {
               <Link href="/admin/profile">
                 <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg">
                   <CgProfile className="text-2xl text-blue-700 group-hover:text-white" />
-                  <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'>Profil</h3>
+                  <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'><p className="text-base text-blue-900 group-hover:text-white font-semibold">{username}</p></h3>
                 </div>
               </Link>
               <Link href="/admin/users">
@@ -53,7 +64,7 @@ export default function Sidebar({ isVisible, toggleSidebar }) {
                 </div>
               </Link>
             </div>
-
+            
             <div className="absolute bottom-5 left-13 flex items-center justify-center">
             <div
               onClick={handleLogout} 

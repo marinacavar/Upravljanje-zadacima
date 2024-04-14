@@ -44,6 +44,7 @@ const Home = () => {
       console.log(response.data);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role', response.data.role);
+      localStorage.setItem('username', response.data.username);
       if (response.data.role === 'admin') {
         router.push('/admin');
       } else {
@@ -51,7 +52,7 @@ const Home = () => {
       }
     } catch (error) {
       console.error("login error", error.response.data);
-      setErrorMessage(error.response.data.message); // Set error message from backend
+      setErrorMessage(error.response.data.message); 
     }
   };
 
@@ -76,7 +77,7 @@ const Home = () => {
                   <FaRegEnvelope className="text-gray-400 mr-2"/>
                   <input type="email" name="email" placeholder="Email" className="bg-gray-100 w-full lg:w-64 " {...register("email")} />
                 </div>
-                {dirtyFields.email && <p className='error-message'>{errors.email?.message}</p>} {/* Display error message for email field */}
+                {dirtyFields.email && <p className='error-message'>{errors.email?.message}</p>} 
 
                 <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3 relative" >
                   <div className="text-gray-400 mr-2">
@@ -104,7 +105,7 @@ const Home = () => {
                     )}
                   </div>
                 </div>
-                {dirtyFields.password && <p className='error-message'>{errors.password?.message}</p>} {/* Display error message for password field */}
+                {dirtyFields.password && <p className='error-message'>{errors.password?.message}</p>} 
 
                 <div className="flex justify-between w-full lg:w-64 mb-5 ">
                   <label className="flex items-center text-xs">
@@ -113,7 +114,7 @@ const Home = () => {
                   </label>
                   <a href="#" className="text-xs">Forgot Password?</a>
                 </div>
-                {errorMessage && <p className='error-message'>{errorMessage}</p>} {/* Display error message */}
+                {errorMessage && <p className='error-message'>{errorMessage}</p>} 
                 <button className="border-2 border-blue-800 text-blue-800 rounded-full px-12 py-2 inline-block font-semibold hover:bg-blue-800 hover:text-white" >Sign In </button>
               </form>
             </div>
