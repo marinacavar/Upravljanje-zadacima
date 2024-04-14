@@ -1,4 +1,3 @@
-
 "use client";
 import React from 'react'
 import Sidebar from '../sidebar';
@@ -6,7 +5,6 @@ import { useState } from 'react';
 import { useEffect, useRef } from 'react';
 import { FiEdit } from "react-icons/fi";
 import { FaEye } from "react-icons/fa";
-import { RiDeleteBin5Fill } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
 import { IoMdAdd, IoMdClose } from "react-icons/io";
 
@@ -105,7 +103,7 @@ const handleSubmit = async (event) => {
         const response = await axios.post('http://localhost:3001/api/users', userData);
         console.log('User added:', response.data);
         fetchUsers(); // Fetch updated user list
-        setIsAddModalOpen(false); // Close the modal after successful user addition
+        setIsAddModalOpen(false); 
         setAddSuccessMessage('User created successfully!');
         setTimeout(() => {
             setAddSuccessMessage('');
@@ -123,19 +121,17 @@ const handleSubmit = async (event) => {
 
     //edit
     
-
     const handleEditClick = (user, cameFromRead = false) => {
         console.log("Edit button clicked, user:", user); 
-        setCurrentUser(user); // Postavljanje trenutnog korisnika u stanje
-        setUpdatedUser(user); // Postavljanje ažuriranog korisnika
-        setIsModalOpen(true); // Otvaranje modal-a za uređivanje
+        setCurrentUser(user); 
+        setUpdatedUser(user); 
+        setIsModalOpen(true); 
         setIsPreviewModalOpen(false);
         setCameFromReadModal(cameFromRead);
         
         
     };
     
-
     const handleInputChange = (event) => {
         // Prikazivanje naziva i vrijednosti ciljnog elementa
         console.log("Naziv svojstva:", event.target.name);
@@ -154,11 +150,9 @@ const handleSubmit = async (event) => {
         console.log("Nakon ažuriranja, updatedUser:", updatedUser);
     };
     
-    
-      const handleUpdate = async () => {
+    const handleUpdate = async () => {
         try {
             const response = await axios.put(`http://localhost:3001/api/users/${currentUser._id}`, updatedUser);
-            // Update the local state with the updated user
             setUsers(users.map(user => user._id === currentUser._id ? response.data : user));
             setIsModalOpen(false);
             setCurrentPreviewedUser(response.data);
@@ -166,7 +160,7 @@ const handleSubmit = async (event) => {
             setTimeout(() => {
                 setUpdateSuccessMessage('');
             }, 5000);
-             // Ako je korisnik došao do update modala preko read modala, otvori read modal
+            
             if (cameFromReadModal) {
                 setIsPreviewModalOpen(true);
                 setCameFromReadModal(false);
@@ -182,7 +176,6 @@ const handleSubmit = async (event) => {
         setCurrentPreviewedUser(user);
         setIsPreviewModalOpen(true);
         setIsModalOpen (false);
-        
     };
 
 
@@ -298,7 +291,6 @@ const handleSubmit = async (event) => {
                                         <tr key={user._id} className="border-b dark:border-gray-700">
                                             <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.username}</td>
                                             <td className="px-4 py-3 text-center">{user.email}</td>
-                                            {/* <td className="px-4 py-3">{user.password}</td> */}
                                             <td className="px-4 py-3 flex items-center justify-end" ref={(el) => (dropdownRefs.current[index] = el)}>
                                                 <button
                                                     className="inline-flex items-center text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 dark:hover-bg-gray-800"
@@ -531,7 +523,7 @@ const handleSubmit = async (event) => {
                     onClick={() => {
                         handleDeleteClick(currentPreviewedUser._id); 
                         setIsPreviewModalOpen(false);
-    }} 
+                    }} 
                     className="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">
                     < MdDelete className="w-5 h-5 mr-1.5 -ml-1" />
                     Delete
