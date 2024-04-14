@@ -6,9 +6,8 @@ import { MdLockOutline, MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-
-
 import axios from 'axios';
+
 const schema = yup.object().shape({
   email: yup
     .string()
@@ -25,7 +24,6 @@ const Home = () => {
   const { register, handleSubmit, formState: { errors, dirtyFields, isValid } } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
-  
   });
 
   useEffect(() => {
@@ -33,6 +31,7 @@ const Home = () => {
   }, [isValid]);
 
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -41,27 +40,24 @@ const Home = () => {
   const submitForm = async (data) => {
     console.log(data);
     try {
-        const response = await axios.post('http://localhost:3001/login', data);
-        console.log(response.data);
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('role', response.data.role);
-        if (response.data.role === 'admin') {
-            router.push('/admin');
-        } else {
-            router.push('/home');
-        }
+      const response = await axios.post('http://localhost:3001/login', data);
+      console.log(response.data);
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('role', response.data.role);
+      if (response.data.role === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push('/home');
+      }
     } catch (error) {
-        console.error("login error", error.response.data);
+      console.error("login error", error.response.data);
+      setErrorMessage(error.response.data.message); // Set error message from backend
     }
-};
-
-
+  };
 
   const goToSignUp = () => {
     router.push('/auth/sign-up');
-  }
-
-
+  };
 
   return (
     <div className="flex flex-col justify-center min-h-screen py-2 bg-gray-100">
@@ -80,8 +76,7 @@ const Home = () => {
                   <FaRegEnvelope className="text-gray-400 mr-2"/>
                   <input type="email" name="email" placeholder="Email" className="bg-gray-100 w-full lg:w-64 " {...register("email")} />
                 </div>
-                  <p className='error-message'>{dirtyFields.email && errors.email?.message}</p>
-                
+                {dirtyFields.email && <p className='error-message'>{errors.email?.message}</p>} {/* Display error message for email field */}
 
                 <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3 relative" >
                   <div className="text-gray-400 mr-2">
@@ -94,8 +89,8 @@ const Home = () => {
                     className="bg-gray-100 w-full lg:w-64 flex-1 "
                     {...register("password")}
                   />
-                  
-                  
+
+
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                     {showPassword ? (
                       <MdVisibility
@@ -109,7 +104,7 @@ const Home = () => {
                     )}
                   </div>
                 </div>
-                <p className='error-message'>{dirtyFields.password && errors.password?.message}</p>
+                {dirtyFields.password && <p className='error-message'>{errors.password?.message}</p>} {/* Display error message for password field */}
 
                 <div className="flex justify-between w-full lg:w-64 mb-5 ">
                   <label className="flex items-center text-xs">
@@ -118,6 +113,7 @@ const Home = () => {
                   </label>
                   <a href="#" className="text-xs">Forgot Password?</a>
                 </div>
+                {errorMessage && <p className='error-message'>{errorMessage}</p>} {/* Display error message */}
                 <button className="border-2 border-blue-800 text-blue-800 rounded-full px-12 py-2 inline-block font-semibold hover:bg-blue-800 hover:text-white" >Sign In </button>
               </form>
             </div>
@@ -133,8 +129,6 @@ const Home = () => {
         </div>
       </main>
     </div>
-
-
   );
 }
 

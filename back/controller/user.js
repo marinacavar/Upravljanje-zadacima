@@ -2,7 +2,6 @@ var User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-
 exports.create = (req, res) => {
     if (!req.body) {
         res.status(400).send({ message: "Content can't be empty" });
@@ -10,60 +9,79 @@ exports.create = (req, res) => {
     }
 
     
-    const emailRegex = /^[^\s@]/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(req.body.email)) {
         res.status(400).send({ message: "Email must be in the format example@mail.com" });
         return;
     }
 
-   
-    User.findOne({ email: req.body.email })
-        .then(existingUser => {
-            if (existingUser) {
-                res.status(400).send({ message: "User with this email already exists" });
-                
-                return;
-            }
+    
+    if (!req.body.username || req.body.username.trim() === "") {
+        res.status(400).send({ message: "Username can't be empty" });
+        return;
+    }
 
-           
-            if (req.body.password.length < 8) {
-                res.status(400).send({ message: "Password must be at least 8 characters long" });
+    
+    if (req.body.password.length < 8) {
+        res.status(400).send({ message: "Password must be at least 8 characters long" });
+        return;
+    }
+
+    
+    User.findOne({ email: req.body.email })
+        .then(existingEmail => {
+            if (existingEmail) {
+                res.status(400).send({ message: "User with this email already exists" });
                 return;
             }
 
             
-            bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
-                if (err) {
-                    res.status(500).send({
-                        message: err.message || "Error hashing password"
+            User.findOne({ username: req.body.username })
+                .then(existingUsername => {
+                    if (existingUsername) {
+                        res.status(400).send({ message: "User with this username already exists" });
+                        return;
+                    }
+
+                    
+                    bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
+                        if (err) {
+                            res.status(500).send({
+                                message: err.message || "Error hashing password"
+                            });
+                            return;
+                        }
+
+                        const user = new User({
+                            username: req.body.username,
+                            email: req.body.email,
+                            password: hashedPassword
+                        });
+
+                        user.save()
+                            .then(data => {
+                                res.send(data);
+                            })
+                            .catch(err => {
+                                res.status(500).send({
+                                    message: err.message || "Some error occurred creating user"
+                                });
+                            });
                     });
-                    return;
-                }
-
-                const user = new User({
-                    username: req.body.username,
-                    email: req.body.email,
-                    password: hashedPassword
-                });
-
-                user.save()
-                 .then(data => {
-                    res.send(data);
-                 })
-                 .catch(err => {
+                })
+                .catch(err => {
                     res.status(500).send({
-                     message: err.message || "Some error occurred creating user"
-               });
-           });
-
-            });
+                        message: err.message || "Some error occurred while checking for existing username"
+                    });
+                });
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Some error occurred while checking for existing user"
+                message: err.message || "Some error occurred while checking for existing email"
             });
         });
 };
+
 
 
 exports.login = (req, res) => {
@@ -73,13 +91,13 @@ exports.login = (req, res) => {
     User.findOne({ email })
         .then(user => {
             if (!user) {
-                return res.status(404).send({ message: "User not found" });
+                return res.status(404).send({ message: "Email is incorrect!" });
             }
 
             
             bcrypt.compare(password, user.password, (err, result) => {
                 if (err || !result) {
-                    return res.status(401).send({ message: "Invalid email or password" });
+                    return res.status(401).send({ message: "Password is incorrect!" });
                 }
 
                 

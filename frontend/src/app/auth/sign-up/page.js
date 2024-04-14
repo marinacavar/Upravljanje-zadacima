@@ -11,31 +11,39 @@ import axios from 'axios';
 
 const schema = yup.object().shape({
     username: yup.string()
-    .required('Please enter a username'),
+        .required('Please enter a username'),
     email: yup.string()
-    .email('Please enter a valid email address')
-    .required('Email is required'),
+        .email('Please enter a valid email address')
+        .required('Email is required'),
     password: yup
-    .string()
-    .min(8, 'Password must be at least 8 characters long')
-    .required('Password is required')
+        .string()
+        .min(8, 'Password must be at least 8 characters long')
+        .required('Password is required'),
+    confirmPassword: yup.string()
+        .oneOf([yup.ref('password'), null], 'Passwords must match')
 });
 
 const SignUp = () => {
     const router = useRouter();
-    const { register, handleSubmit,formState: { errors, dirtyFields, isValid } } = useForm({
+    const { register, handleSubmit, formState: { errors, dirtyFields, isValid } } = useForm({
         resolver: yupResolver(schema),
         mode: 'onChange'
     });
 
     useEffect(() => {
         console.log('isValid', isValid);
-      }, [isValid]);
+    }, [isValid]);
 
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
+    };
+
+    const toggleConfirmPasswordVisibility = () => {
+        setShowConfirmPassword(!showConfirmPassword);
     };
 
     const submitForm = async (data) => {
@@ -48,10 +56,11 @@ const SignUp = () => {
         } catch (error) {
             console.error("signup error", error.response.data);
             if (error.response.status === 400 && error.response.data.message === "User with this email already exists") {
-                alert('Korisnik s tom email adresom već postoji!');
+                setErrorMessage('User with this email already exists!');
+            } else if (error.response.status === 400 && error.response.data.message === "User with this username already exists") {
+                setErrorMessage('User with this username already exists!');
             } else {
-                // Handle other error cases
-                alert('Error occurred while registering. Please try again later.');
+                setErrorMessage('Error occurred while registering. Please try again later.');
             }
         }
     };
@@ -75,15 +84,11 @@ const SignUp = () => {
                                 </div>
                                 <p className='error-message'>{dirtyFields.username && errors.username?.message}</p>
 
-                                 
-
                                 <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3">
                                     <FaRegEnvelope className="text-gray-400 mr-2" />
-                                    <input type="email" name="email" placeholder="Email" className="bg-gray-100 w-full lg:w-64"  {...register("email")} />
+                                    <input type="email" name="email" placeholder="Email" className="bg-gray-100 w-full lg:w-64" {...register("email")} />
                                 </div>
                                 <p className="error-message">{dirtyFields.email && errors.email?.message}</p>
-                                
-                                
 
                                 <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3 relative">
                                     <div className="text-gray-400 mr-2">
@@ -95,9 +100,7 @@ const SignUp = () => {
                                         placeholder="Password"
                                         className="bg-gray-100 w-full lg:w-64 "
                                         {...register("password")}
-                                        
                                     />
-                                    
                                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                         {showPassword ? (
                                             <MdVisibility
@@ -113,7 +116,35 @@ const SignUp = () => {
                                     </div>
                                 </div>
                                 <p className='error-message'>{dirtyFields.password && errors.password?.message}</p>
-                                
+
+                                <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3 relative">
+                                    <div className="text-gray-400 mr-2">
+                                        <MdLockOutline />
+                                    </div>
+                                    <input
+                                        type={showConfirmPassword ? 'text' : 'password'}
+                                        name="confirmPassword"
+                                        placeholder="Confirm Password"
+                                        className="bg-gray-100 w-full lg:w-64 "
+                                        {...register("confirmPassword")}
+                                    />
+                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        {showConfirmPassword ? (
+                                            <MdVisibility
+                                                className="text-gray-400 cursor-pointer"
+                                                onClick={toggleConfirmPasswordVisibility}
+                                            />
+                                        ) : (
+                                            <MdVisibilityOff
+                                                className="text-gray-400 cursor-pointer"
+                                                onClick={toggleConfirmPasswordVisibility}
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                                <p className='error-message'>{dirtyFields.confirmPassword && errors.confirmPassword?.message}</p>
+
+                                {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
                                 <button type="submit" className="border-2 border-blue-800 text-blue-800 px-12 py-2 rounded-full inline-block font-semibold hover:bg-blue-800 hover:text-white">Sign Up</button>
                             </form>
