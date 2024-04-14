@@ -106,7 +106,7 @@ exports.login = (req, res) => {
                 });
 
                 
-                res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).json({ token, role: user.role });
+                res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).json({ token, username: user.username, role: user.role });
             });
         })
         .catch(err => {

@@ -2,15 +2,18 @@
 import { Disclosure } from '@headlessui/react';
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import { FaTasks } from "react-icons/fa";
 
 export default function Sidebar() {
   const router = useRouter();
+  const [username, setUsername] = useState('');
 
   useEffect(() => {
+    const storedUsername = localStorage.getItem('username');
+     setUsername(storedUsername);
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/'); 
@@ -22,9 +25,9 @@ export default function Sidebar() {
   const handleLogout = () => {
     
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('username');
     window.history.replaceState({}, document.title, '/');
-
-    
     router.push('/');
   };
 
@@ -52,7 +55,7 @@ export default function Sidebar() {
             <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto">
               {/* need icons */}
               <CgProfile className="text-2xl text-blue-700 group-hover:text-white" />
-              <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'>Profil</h3>
+              <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'><p className="text-base text-blue-900 group-hover:text-white font-semibold">{username}</p></h3>
             </div>
             <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto">
               {/* need icons */}
@@ -61,8 +64,6 @@ export default function Sidebar() {
             </div>
             
           </div>
-
-           
            <div className="absolute bottom-5 left-13 flex items-center justify-center">
            <div
                         onClick={handleLogout} 
