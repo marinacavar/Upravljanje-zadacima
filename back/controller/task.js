@@ -5,11 +5,11 @@ exports.create = (req, res) => {
         res.status(400).send({ message: "Content can't be empty" });
         return;
     }
-    const deadline = moment(req.body.deadline, 'DD-MM-YYYY').toDate();
+    //const deadline = moment(req.body.deadline, 'DD-MM-YYYY').toDate();
     const task = new Task({
         tasks: req.body.tasks,
         user: req.body.user,
-        deadline: deadline,
+        deadline: req.body.deadline,
         status: req.body.status
     });
     task.save()

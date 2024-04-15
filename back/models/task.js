@@ -6,7 +6,7 @@ var schema = new mongoose.Schema({
         required:true
     },
     user: {
-        type: String,
+        type: date,
         required:true
         
     },
