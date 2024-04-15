@@ -21,6 +21,7 @@ const Tasks = () => {
     const [openDropdowns, setOpenDropdowns] = useState(Array(tasks.length).fill(false));
     const dropdownRefs = useRef([]);
     const [addSuccessMessage, setAddSuccessMessage] = useState('');
+    const [users, setUsers] = useState([]);
     // update
     const [updatedTask, setUpdatedTask] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,6 +38,7 @@ const Tasks = () => {
 
     useEffect(() => {
         fetchTasks(); 
+        fetchUsers();
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
           document.removeEventListener('mousedown', handleClickOutside);
@@ -50,6 +52,14 @@ const Tasks = () => {
             setTasks(response.data);
         } catch (error) {
             console.error('Error fetching tasks:', error);
+        }
+    };
+    const fetchUsers = async () => {
+        try {
+            const response = await axios.get('http://localhost:3001/api/users');
+            setUsers(response.data);
+        } catch (error) {
+            console.error('Error fetching users:', error);
         }
     };
 
@@ -399,16 +409,30 @@ const handleSubmit = async (event) => {
                         </div>
                         <div>
                             <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
-                            <input type="text" name="user" id="user" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Enter user" required=""/>
+                            <select name="user" id="user" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                <option value="">Select User</option>
+                                {users.map(user => (
+                                    <option key={user.id} value={user.username}>{user.username}</option>
+                                ))}
+                            </select>
                         </div>
+   
                         <div>
                             <label htmlFor="deadline" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deadline</label>
                             <input type="date" name="deadline" id="deadline" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Enter deadline" required=""/>
                         </div>
                         <div>
-                            <label htmlFor="status" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
-                            <input type="text" name="status" id="status" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Enter status" required=""/>
-                        </div>
+                          <label htmlFor="status" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                          <select id="status" name="status" value={updatedTask.status} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                              <option value="Active">Active</option>
+                              <option value="Expired">Expired</option>
+                              <option value="Done">Done</option>
+                         </select>
+                       </div>    
+                       
+                       
+    
+                       
                     </div>
                     <button type="submit" className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none px-4 py-2 rounded-lg">
                       <svg className="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
