@@ -58,7 +58,7 @@ exports.update = (req, res) => {
     }
 
     const id=req.params.id;
-    Task.findByIdAndUpdate(id,req.body,{useFindAndModify:false})
+    Task.findByIdAndUpdate(id,req.body,{useFindAndModify:false, new: true})
     .then(data=>{
         if(!data){
             res.status(404).send({message:`Can't update task with ${id}`})
