@@ -25,6 +25,7 @@ const Users = () => {
     const [updatedUser, setUpdatedUser] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [updateSuccessMessage, setUpdateSuccessMessage] = useState('');
+    const [updateValidationMessage, setUpdateValidationMessage] = useState('');
     //read
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const [currentPreviewedUser, setCurrentPreviewedUser] = useState(null);
@@ -83,10 +84,8 @@ const Users = () => {
 
     
 //  user add
-
 const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent default form submission behavior
-    console.log('Form submitted!');
+    event.preventDefault();
     
     const form = event.target;
     const formData = new FormData(form);
@@ -97,12 +96,31 @@ const handleSubmit = async (event) => {
         password: formData.get('password')
     };
 
-    console.log('User data:', userData);
-
     try {
+        const existingUser = users.find(user => user.email === userData.email || user.username === userData.username);
+        
+        if (existingUser) {
+            console.error('Error: A user with the same email or username already exists.');
+            
+            setUpdateValidationMessage('Failed to add user: A user with the same email or username already exists.');
+            setTimeout(() => {
+                setUpdateValidationMessage('');
+            }, 3000);
+            return;
+        }
+        if (userData.password.length < 8) {
+            console.error('Error: Password must be at least 8 characters long.');
+            
+            setUpdateValidationMessage('Failed to add user: Password must be at least 8 characters long.');
+            setTimeout(() => {
+                setUpdateValidationMessage('');
+            }, 3000);
+            return;
+        }
+
         const response = await axios.post('http://localhost:3001/api/users', userData);
         console.log('User added:', response.data);
-        fetchUsers(); // Fetch updated user list
+        fetchUsers(); 
         setIsAddModalOpen(false); 
         setAddSuccessMessage('User created successfully!');
         setTimeout(() => {
@@ -112,6 +130,7 @@ const handleSubmit = async (event) => {
         console.error('Error adding user:', error);
     }
 };
+
 
     const handleModalToggle = () => {
         setIsAddModalOpen(!isAddModalOpen);
@@ -133,25 +152,37 @@ const handleSubmit = async (event) => {
     };
     
     const handleInputChange = (event) => {
-        // Prikazivanje naziva i vrijednosti ciljnog elementa
+        
         console.log("Naziv svojstva:", event.target.name);
         console.log("Vrijednost svojstva:", event.target.value);
     
-        // Prikazivanje trenutnog stanja updatedUser prije ažuriranja
+        
         console.log("Prije ažuriranja, updatedUser:", updatedUser);
     
-        // Ažuriranje updatedUser
+       
         setUpdatedUser({
             ...updatedUser,
             [event.target.name]: event.target.value
         });
     
-        // Prikazivanje trenutnog stanja updatedUser nakon ažuriranja
+        
         console.log("Nakon ažuriranja, updatedUser:", updatedUser);
     };
-    
     const handleUpdate = async () => {
         try {
+            
+            const existingUser = users.find(user => (user.email === updatedUser.email || user.username === updatedUser.username) && user._id !== currentUser._id);
+            
+            if (existingUser) {
+                console.error('Error: User with the same email or username already exists.');
+               
+                setUpdateValidationMessage('User with the same email or username already exists.');
+                setTimeout(() => {
+                    setUpdateValidationMessage('');
+                }, 3000);
+                return;
+            }
+        
             const response = await axios.put(`http://localhost:3001/api/users/${currentUser._id}`, updatedUser);
             setUsers(users.map(user => user._id === currentUser._id ? response.data : user));
             setIsModalOpen(false);
@@ -168,7 +199,9 @@ const handleSubmit = async (event) => {
         } catch (error) {
             console.error('Failed to update user:', error);
         }
-    }
+    };
+    
+    
     
     //read
 
@@ -189,7 +222,7 @@ const handleSubmit = async (event) => {
         if (userToDelete) {
             axios.delete(`http://localhost:3001/api/users/${userToDelete}`)
                 .then(() => {
-                    fetchUsers(); // Fetch updated user list
+                    fetchUsers(); 
                     setIsDeleteModalOpen(false);
                     setUserToDelete(null);
                 })
@@ -417,7 +450,17 @@ const handleSubmit = async (event) => {
                {addSuccessMessage}
            </div>
        )}
+        
    </div>
+   <div>
+    {updateValidationMessage && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-red-500 text-white px-4 py-2 rounded">
+                {updateValidationMessage}
+            </div>
+        </div>
+    )}
+</div>
 
 
 {/* <!-- Update modal --> */}
@@ -490,6 +533,15 @@ const handleSubmit = async (event) => {
             </div>
         )}
     </div>
+    <div>
+    {updateValidationMessage && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-red-500 text-white px-4 py-2 rounded">
+                {updateValidationMessage}
+            </div>
+        </div>
+    )}
+</div>
 {/* <!-- Read modal --> */}
 <div id="readProductModal" className={`${isPreviewModalOpen ? '' : 'hidden'} fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50`}>
     <div className="relative p-4 w-full max-w-xl">
