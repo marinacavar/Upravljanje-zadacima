@@ -11,7 +11,7 @@ var schema = new mongoose.Schema({
         
     },
     deadline: {
-        type: date,
+        type: Date,
         required:true
 
     },

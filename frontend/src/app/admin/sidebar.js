@@ -1,5 +1,4 @@
 "use client";
-"use client";
 import { Disclosure } from '@headlessui/react';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
