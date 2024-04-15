@@ -1,28 +1,28 @@
 const Task = require('../models/task');
 const moment = require('moment');
-
 exports.create = (req, res) => {
     if (!req.body) {
         res.status(400).send({ message: "Content can't be empty" });
         return;
     }
     const deadline = moment(req.body.deadline, 'DD-MM-YYYY').toDate();
-    const task = new Task ({
+    const task = new Task({
         tasks: req.body.tasks,
         user: req.body.user,
         deadline: deadline,
         status: req.body.status
     });
     task.save()
-    .then(data => {
-        res.redirect('/');
-    })
-    .catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred creating task"
+        .then(data => {
+            res.status(201).json(data); // Send back the created task as a response
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred creating task"
+            });
         });
-    });
 }
+
 
 exports.find = (req, res) => {
     if(req.query.id){
