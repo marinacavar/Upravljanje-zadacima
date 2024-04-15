@@ -6,12 +6,12 @@ var schema = new mongoose.Schema({
         required:true
     },
     user: {
-        type: date,
+        type: String,
         required:true
         
     },
     deadline: {
-        type: String,
+        type: date,
         required:true
 
     },
