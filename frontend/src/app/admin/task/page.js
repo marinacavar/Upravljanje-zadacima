@@ -183,7 +183,7 @@ const handleSubmit = async (event) => {
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Mjeseci počinju od 0 u JavaScriptu
+        const month = String(date.getMonth() + 1).padStart(2, '0'); 
         const year = date.getFullYear();
 
         return `${day}.${month}.${year}.`;
@@ -316,9 +316,9 @@ const handleSubmit = async (event) => {
                                         <tr key={task._id} className="border-b dark:border-gray-700">
                                             <td className="px-4 py-3 font-medium text-gray-900 whitespace-normal dark:text-white text-center break-all overflow-auto">{task.tasks}</td>
                                             <td className="px-4 py-3 text-center break-all overflow-auto  ">{task.user}</td>
-                                            <td className="px-4 py-3 text-center break-all overflow-auto ">{formatDate(task.deadline)}</td>
-                                            <td className="px-4 py-3 text-center break-all overflow-auto">{task.status}</td>
-                                            <td className="px-4 py-3 items-center text-center break-all overflow-auto" ref={(el) => (dropdownRefs.current[index] = el)}>
+                                            <td className="px-4 py-3 text-center ">{formatDate(task.deadline)}</td>
+                                            <td className="px-4 py-3 text-center ">{task.status}</td>
+                                            <td className="px-4 py-3 items-center text-center" ref={(el) => (dropdownRefs.current[index] = el)}>
                                                 <button
                                                     className="inline-flex items-center text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 dark:hover-bg-gray-800 "
                                                     type="button"
@@ -417,7 +417,7 @@ const handleSubmit = async (event) => {
                     <div className="grid gap-4 mb-4 sm:grid-cols-2">
                         <div>
                             <label htmlFor="tasks" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task</label>
-                            <input type="text" name="tasks" id="tasks" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Enter task" required=""/>
+                            <textarea name="tasks" id="tasks" className="h-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Enter task" required=""/>
                         </div>
                         <div>
                             <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
@@ -435,7 +435,8 @@ const handleSubmit = async (event) => {
                         </div>
                         <div>
                           <label htmlFor="status" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
-                          <select id="status" name="status" value={updatedTask.status} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                          <select id="status" name="status" value={updatedTask.status || ""} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                              <option value=""disabled selected>Select status</option>
                               <option value="Active">Active</option>
                               <option value="Expired">Expired</option>
                               <option value="Done">Done</option>
@@ -490,16 +491,19 @@ const handleSubmit = async (event) => {
                             <label htmlFor="tasks" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task</label>
                             <textarea 
                             name="tasks" 
-                            id="tasks"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            id="tasks" 
+                            className="h-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             value={updatedTask.tasks} onChange={handleInputChange}
                             />
                         </div>
                         <div>
                             <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
-                            <input type="text" name="user" id="email" value={updatedTask.user} onChange={handleInputChange}
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
-                            />
+                            <select name="user" id="user" value={updatedTask.user} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                <option value="">Select User</option>
+                                {users.map(user => (
+                                    <option key={user.id} value={user.username}>{user.username}</option>
+                                ))}
+                            </select>
                         </div>
                         <div>
                             <label htmlFor="deadline" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deadline</label>
