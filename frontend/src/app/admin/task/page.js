@@ -170,6 +170,18 @@ const handleSubmit = async (event) => {
             console.error('Failed to update task:', error);
         }
     }
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Mjeseci počinju od 0 u JavaScriptu
+        const year = date.getFullYear();
+
+        return `${day}.${month}.${year}.`;
+    }
+
+    const formatDateForInput = (dateString) => {
+        return new Date(dateString).toISOString().split('T')[0];
+    }
     
     //read
 
@@ -280,11 +292,11 @@ const handleSubmit = async (event) => {
                                 <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-fixed">
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
-                                            <th scope="col" className="px-4 py-4 w-1/3 ">Task</th>
-                                            <th scope="col" className="px-4 py-3 w-1/3 ">User</th>
-                                            <th scope="col" className="px-4 py-3 w-1/3 ">Deadline</th>
-                                            <th scope="col" className="px-4 py-3 w-1/3 ">Status</th>
-                                            <th scope="col" className="px-4 py-3 w-1/3 ">
+                                            <th scope="col" className="px-4 py-4 w-1/5 text-center">Task</th>
+                                            <th scope="col" className="px-4 py-3 w-1/5 text-center">User</th>
+                                            <th scope="col" className="px-4 py-3 w-1/5 text-center">Deadline</th>
+                                            <th scope="col" className="px-4 py-3 w-1/5 text-center">Status</th>
+                                            <th scope="col" className="px-4 py-3 w-1/5 text-center">
                                                 <span className="sr-only text-right">Actions</span>
                                             </th>
                                         </tr>
@@ -292,11 +304,11 @@ const handleSubmit = async (event) => {
                                     <tbody>
                                     {currentTasks.map((task, index) => (
                                         <tr key={task._id} className="border-b dark:border-gray-700">
-                                            <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{task.tasks}</td>
-                                            <td className="px-4 py-3 ">{task.user}</td>
-                                            <td className="px-4 py-3 ">{task.deadline}</td>
-                                            <td className="px-4 py-3 ">{task.status}</td>
-                                            <td className="px-4 py-3 flex items-center justify-end" ref={(el) => (dropdownRefs.current[index] = el)}>
+                                            <td className="px-4 py-3 font-medium text-gray-900 whitespace-normal dark:text-white text-center break-all overflow-auto">{task.tasks}</td>
+                                            <td className="px-4 py-3 text-center break-all overflow-auto  ">{task.user}</td>
+                                            <td className="px-4 py-3 text-center break-all overflow-auto ">{formatDate(task.deadline)}</td>
+                                            <td className="px-4 py-3 text-center break-all overflow-auto">{task.status}</td>
+                                            <td className="px-4 py-3 items-center text-center break-all overflow-auto" ref={(el) => (dropdownRefs.current[index] = el)}>
                                                 <button
                                                     className="inline-flex items-center text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 dark:hover-bg-gray-800 "
                                                     type="button"
@@ -452,7 +464,7 @@ const handleSubmit = async (event) => {
                     <div className="grid gap-4 mb-4 sm:grid-cols-2">
                         <div>
                             <label htmlFor="tasks" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task</label>
-                            <input type="text" 
+                            <textarea 
                             name="tasks" 
                             id="tasks"
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -467,7 +479,7 @@ const handleSubmit = async (event) => {
                         </div>
                         <div>
                             <label htmlFor="deadline" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deadline</label>
-                            <input type="date" name="deadline" id="deadline" value={updatedTask.deadline} onChange={handleInputChange}
+                            <input type="date" name="deadline" id="deadline" value={formatDateForInput(updatedTask.deadline)} onChange={handleInputChange}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
                             />
                         </div>
@@ -521,13 +533,13 @@ const handleSubmit = async (event) => {
             </div>
             <dl>
                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Task</dt>
-                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{currentPreviewedTask && currentPreviewedTask.tasks}</dd>
+                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.tasks}</dd>
                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">User</dt>
-                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{currentPreviewedTask && currentPreviewedTask.user}</dd>
+                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.user}</dd>
                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Deadline</dt>
-                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{currentPreviewedTask && currentPreviewedTask.deadline}</dd>
+                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && formatDate (currentPreviewedTask.deadline)}</dd>
                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Status</dt>
-                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{currentPreviewedTask && currentPreviewedTask.status}</dd>
+                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.status}</dd>
                 
             </dl>
             <div className="flex justify-between items-center">
