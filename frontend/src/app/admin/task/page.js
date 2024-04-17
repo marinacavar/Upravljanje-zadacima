@@ -212,7 +212,7 @@ const handleSubmit = async (event) => {
         if (taskToDelete) {
             axios.delete(`http://localhost:3001/task/${taskToDelete}`)
                 .then(() => {
-                    fetchTasks(); // Fetch updated task list
+                    fetchTasks(); 
                     setIsDeleteModalOpen(false);
                     setTaskToDelete(null);
                 })

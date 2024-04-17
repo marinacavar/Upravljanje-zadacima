@@ -8,6 +8,7 @@ const { authenticateToken } = require('../controller/user');
 route.post('/api/users', controller.create);
 route.post('/login', controller.login);
 route.get('/api/users', controller.find);
+route.get('/api/users/:id', controller.findOne);
 route.put('/api/users/:id', controller.update);
 route.delete('/api/users/:id', controller.delete);
 

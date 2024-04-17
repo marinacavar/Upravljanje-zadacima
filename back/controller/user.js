@@ -131,32 +131,47 @@ exports.authenticateToken = (req, res, next) => {
 };
 
 
+
 exports.find = (req, res) => {
-    if(req.query.id){
-        const id=req.query.id;
-    
-        User.findById(id)
-        .then(data => {
-            if(!data){
-                res.status(404).send({message:"Not found user with id"+id})
-            }else{
-                res.send(data)
-            }
+    const searchQuery = req.query.search; 
+
+    if (searchQuery) {
+        User.find({
+            $or: [
+                { username: { $regex: searchQuery, $options: 'i' } }, 
+                { email: { $regex: searchQuery, $options: 'i' } } 
+            ]
+        })
+        .then(users => {
+            res.send(users);
         })
         .catch(err => {
-            res.status(500).send({message:"Error retriving user with id"+id})
-        })
-
-    }else{
+            res.status(500).send({ message: "Error retrieving users with search query" });
+        });
+    } else {
         User.find()
-        .then(user => {
-           res.send(user)
+        .then(users => {
+            res.send(users);
         })
-        .catch(err =>{
-            res.status(500).send({message: err.message || "Error occure while retriving user information"})
-       })
-
+        .catch(err => {
+            res.status(500).send({ message: "Error retrieving users" });
+        });
     }
+};
+exports.findOne = (req, res) => {
+    const id = req.params.id;
+
+    User.findById(id)
+        .then(user => {
+            if (!user) {
+                return res.status(404).send({ message: `User with id ${id} not found` });
+            }
+            
+            res.send(user);
+        })
+        .catch(err => {
+            res.status(500).send({ message: `Error retrieving user with id ${id}` });
+        });
 };
 
 exports.update = (req, res) => {

@@ -45,16 +45,16 @@ const Users = () => {
           document.removeEventListener('mousedown', handleClickOutside);
         };
       }, []);
-
-
-    const fetchUsers = async () => {
+      const fetchUsers = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/api/users');
+            const response = await axios.get(`http://localhost:3001/api/users?search=${searchQuery}`);
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching users:', error);
         }
     };
+
+
     const filteredUsers = users.filter(user =>
         user.username.toLowerCase().includes(searchQuery.toLowerCase())
     );
