@@ -24,7 +24,7 @@ exports.create = (req, res) => {
 
 
 
-exports.find = (req, res) => {
+/*exports.find = (req, res) => {
     if(req.query.id){
         const id=req.query.id;
     
@@ -50,7 +50,31 @@ exports.find = (req, res) => {
        })
 
     }
+};*/
+exports.find = (req, res) => {
+    const searchQuery = req.query.search; 
+
+    if (searchQuery) {
+        Task.find({
+            tasks: { $regex: searchQuery, $options: 'i' } 
+        })
+        .then(tasks => {
+            res.send(tasks);
+        })
+        .catch(err => {
+            res.status(500).send({ message: "Error retrieving tasks with search query" });
+        });
+    } else {
+        Task.find()
+        .then(tasks => {
+            res.send(tasks);
+        })
+        .catch(err => {
+            res.status(500).send({ message: "Error retrieving tasks" });
+        });
+    }
 };
+
 
 exports.update = (req, res) => {
     if(!req.body){

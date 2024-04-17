@@ -36,15 +36,16 @@ const Home = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
   const submitForm = async (data) => {
     console.log(data);
     try {
       const response = await axios.post('http://localhost:3001/login', data);
-      console.log(response.data);
+      console.log(response.data); // Log the entire response data
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role', response.data.role);
       localStorage.setItem('username', response.data.username);
+
+  
       if (response.data.role === 'admin') {
         router.push('/admin');
       } else {
@@ -54,7 +55,10 @@ const Home = () => {
       console.error("login error", error.response.data);
       setErrorMessage(error.response.data.message); 
     }
+    
+
   };
+  
 
   const goToSignUp = () => {
     router.push('/auth/sign-up');
