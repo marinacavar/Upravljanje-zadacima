@@ -422,7 +422,7 @@ const handleSubmit = async (event) => {
                         <div>
                             <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
                             <select name="user" id="user" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                                <option value="">Select User</option>
+                                <option value=""disabled selected>Select User</option>
                                 {users.map(user => (
                                     <option key={user.id} value={user.username}>{user.username}</option>
                                 ))}
@@ -499,7 +499,7 @@ const handleSubmit = async (event) => {
                         <div>
                             <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
                             <select name="user" id="user" value={updatedTask.user} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                                <option value="">Select User</option>
+                                <option value="" disabled selected>Select User</option>
                                 {users.map(user => (
                                     <option key={user.id} value={user.username}>{user.username}</option>
                                 ))}
