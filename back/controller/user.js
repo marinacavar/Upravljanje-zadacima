@@ -106,7 +106,7 @@ exports.create = (req, res) => {
         .catch(err => {
             res.status(500).send({ message: "Error occurred while logging in" });
         });
-};*/
+};*/ 
 
 exports.login = (req, res) => {
     const { email, password } = req.body;
@@ -122,11 +122,12 @@ exports.login = (req, res) => {
                     return res.status(401).send({ message: "Password is incorrect!" });
                 }
 
-                const token = jwt.sign({ username: user.username, email: user.email, role: user.role }, process.env.JWT_SECRET, {
+                const token = jwt.sign({ id: user.id, username: user.username,  role: user.role }, process.env.JWT_SECRET, {
                     expiresIn: '1h'
                 });
 
-                res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).json({ token, username: user.username, email: user.email, role: user.role });
+                
+                res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).json({ token, id: user.id, username: user.username,  role: user.role });
             });
         })
         .catch(err => {

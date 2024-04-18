@@ -1,25 +1,25 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../sidebar';
+import axios from 'axios';
 
 function Profile() {
     const [userInfo, setUserInfo] = useState(null);
 
     useEffect(() => {
-        // Extract user information from the token stored in localStorage
-        const token = localStorage.getItem('token');
-        if (token) {
-            const decodedToken = parseJwt(token); // Assuming you have a function to parse JWT tokens
-            setUserInfo(decodedToken); // Set user information from the decoded token
+        const userId = localStorage.getItem('userId'); 
+        if (userId) {
+            fetchUserInfo(userId); 
         }
     }, []);
 
-    // Function to parse JWT tokens
-    const parseJwt = (token) => {
+    const fetchUserInfo = async (userId) => {
         try {
-            return JSON.parse(atob(token.split('.')[1]));
-        } catch (e) {
-            return null;
+            const response = await axios.get(`http://localhost:3001/api/users/${userId}`); 
+            setUserInfo(response.data); 
+        } catch (error) {
+            console.error("Error fetching user information", error);
+            
         }
     };
 
