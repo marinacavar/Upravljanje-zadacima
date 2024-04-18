@@ -22,6 +22,8 @@ const Tasks = () => {
     const dropdownRefs = useRef([]);
     const [addSuccessMessage, setAddSuccessMessage] = useState('');
     const [users, setUsers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+
     // update
     const [updatedTask, setUpdatedTask] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,17 +45,18 @@ const Tasks = () => {
         return () => {
           document.removeEventListener('mousedown', handleClickOutside);
         };
-      }, []);
-
-
-    const fetchTasks = async () => {
+      }, [searchQuery]);
+      const fetchTasks = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/task');
+            const response = await axios.get(`http://localhost:3001/task?search=${searchQuery}`);
             setTasks(response.data);
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
     };
+    
+
+
     const fetchUsers = async () => {
         try {
             const response = await axios.get('http://localhost:3001/api/users');
@@ -93,27 +96,26 @@ const Tasks = () => {
 
     
 //  task add
-
 const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent default form submission behavior
-    console.log('Form submitted!');
-    
+    event.preventDefault();
+
     const form = event.target;
     const formData = new FormData(form);
+    const selectedUsers = Array.from(formData.getAll('users'));
+    const usersString = selectedUsers.join(' ');
 
     const taskData = {
         tasks: formData.get('tasks'),
-        user: formData.get('user'),
+        users: usersString, 
         deadline: formData.get('deadline'),
         status: formData.get('status')
     };
-
     console.log('Task data:', taskData);
 
     try {
         const response = await axios.post('http://localhost:3001/task', taskData);
         console.log('Task added:', response.data);
-        fetchTasks(); // Fetch updated task list
+        fetchTasks();
         setIsAddModalOpen(false); 
         setAddSuccessMessage('Task created successfully!');
         setTimeout(() => {
@@ -123,6 +125,7 @@ const handleSubmit = async (event) => {
         console.error('Error adding task:', error);
     }
 };
+
 
     const handleModalToggle = () => {
         setIsAddModalOpen(!isAddModalOpen);
@@ -144,20 +147,19 @@ const handleSubmit = async (event) => {
     };
     
     const handleInputChange = (event) => {
-        // Prikazivanje naziva i vrijednosti ciljnog elementa
         console.log("Naziv svojstva:", event.target.name);
         console.log("Vrijednost svojstva:", event.target.value);
     
-        // Prikazivanje trenutnog stanja updatedTask prije ažuriranja
+        
         console.log("Prije ažuriranja, updatedTask:", updatedTask);
     
-        // Ažuriranje updatedTask
+        
         setUpdatedTask({
             ...updatedTask,
             [event.target.name]: event.target.value
         });
     
-        // Prikazivanje trenutnog stanja updatedTask nakon ažuriranja
+        
         console.log("Nakon ažuriranja, updatedTask:", updatedTask);
     };
     
@@ -242,7 +244,14 @@ const handleSubmit = async (event) => {
                                                     <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
                                                 </svg>
                                             </div>
-                                            <input type="text" id="simple-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search" required=""/>
+                                            <input
+                                                 type="text"
+                                                 id="simple-search"
+                                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
+                                                 placeholder="Search"
+                                                 value={searchQuery}
+                                                 onChange={(e) => setSearchQuery(e.target.value)}
+                                             />
                                         </div>
                                     </form>
                                 </div>
@@ -421,12 +430,18 @@ const handleSubmit = async (event) => {
                         </div>
                         <div>
                             <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
-                            <select name="user" id="user" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                                <option value=""disabled selected>Select User</option>
-                                {users.map(user => (
-                                    <option key={user.id} value={user.username}>{user.username}</option>
-                                ))}
-                            </select>
+                            {users.map(user => (
+                               <div key={user.username} className="flex items-center">
+                                  <input 
+                                      type="checkbox" 
+                                      name="users" 
+                                      value={user.username} 
+                                      id={user.username} 
+                                      className="text-primary focus:ring-primary-600 h-4 w-4" 
+                                   />
+                                   <label htmlFor={user.username} className="ml-2">{user.username}</label>
+                               </div>
+                           ))}
                         </div>
    
                         <div>
@@ -436,7 +451,7 @@ const handleSubmit = async (event) => {
                         <div>
                           <label htmlFor="status" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
                           <select id="status" name="status" value={updatedTask.status || ""} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                              <option value=""disabled selected>Select status</option>
+                              <option value=""disabled >Select status</option>
                               <option value="Active">Active</option>
                               <option value="Expired">Expired</option>
                               <option value="Done">Done</option>
@@ -593,22 +608,22 @@ const handleSubmit = async (event) => {
 
 {/* <!-- Delete modal --> */}
 {isDeleteModalOpen && (
-<div id="deleteModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
-    <div class="relative p-4 w-full max-w-md max-h-full">
+<div id="deleteModal" tabIndex="-1" aria-hidden="true" className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+    <div className="relative p-4 w-full max-w-md max-h-full">
         {/* <!-- Modal content --> */}
-        <div class="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+        <div className="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
             
-            <button onClick={() => setIsDeleteModalOpen(false)} type="button" class="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
+            <button onClick={() => setIsDeleteModalOpen(false)} type="button" className="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
                 <IoMdClose className="w-5 h-5"/>
-                <span class="sr-only">Close modal</span>
+                <span className="sr-only">Close modal</span>
             </button>
-            <svg class="text-gray-400 dark:text-gray-500 w-11 h-11 mb-3.5 mx-auto" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <svg className="text-gray-400 dark:text-gray-500 w-11 h-11 mb-3.5 mx-auto" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
-            <p class="mb-4 text-gray-500 dark:text-gray-300">Are you sure you want to delete this item?</p>
-            <div class="flex justify-center items-center space-x-4">
-                <button onClick={() => setIsDeleteModalOpen(false)}  type="button" class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">No, cancel</button>
-                <button onClick={handleConfirmDelete} type="submit" class="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">Yes, I'm sure</button>
+            <p className="mb-4 text-gray-500 dark:text-gray-300">Are you sure you want to delete this item?</p>
+            <div className="flex justify-center items-center space-x-4">
+                <button onClick={() => setIsDeleteModalOpen(false)}  type="button" className="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">No, cancel</button>
+                <button onClick={handleConfirmDelete} type="submit" className="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">Yes, I'm sure</button>
             </div>
         </div>
     </div>

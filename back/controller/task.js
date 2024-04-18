@@ -5,22 +5,29 @@ exports.create = (req, res) => {
         return;
     }
     
+    console.log('Received task data:', req.body);
+    
     const task = new Task({
         tasks: req.body.tasks,
-        users: req.body.users, 
+        user: req.body.users, 
         deadline: req.body.deadline,
         status: req.body.status
     });
+
+    
     task.save()
         .then(data => {
+            console.log('Task saved:', data); 
             res.status(201).json(data); 
         })
         .catch(err => {
+            console.error('Error saving task:', err);
             res.status(500).send({
                 message: err.message || "Some error occurred creating task"
             });
         });
 }
+
 
 
 
