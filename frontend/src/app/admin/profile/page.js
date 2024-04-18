@@ -1,34 +1,45 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from 'react';
+import Sidebar from '../sidebar';
 import axios from 'axios';
 
-const ProfilePage = ({ userId }) => {
-    const [user, setUser] = useState(null);
+function Profile() {
+    const [userInfo, setUserInfo] = useState(null);
 
     useEffect(() => {
-        fetchUser();
+        const userId = localStorage.getItem('userId'); 
+        if (userId) {
+            fetchUserInfo(userId); 
+        }
     }, []);
 
-    const fetchUser = async () => {
+    const fetchUserInfo = async (userId) => {
         try {
-            const response = await axios.get(`http://localhost:3001/api/users/${userId}`);
-            setUser(response.data);
+            const response = await axios.get(`http://localhost:3001/api/users/${userId}`); 
+            setUserInfo(response.data); 
         } catch (error) {
-            console.error('Error fetching user:', error);
+            console.error("Error fetching user information", error);
+            
         }
     };
 
-    if (!user) {
-        return <div>Loading...</div>;
-    }
-
     return (
         <div>
-            <h1>{user.username}'s Profile</h1>
-            <p>Email: {user.email}</p>
-            {/* Display other user details here */}
+            <Sidebar/>
+            <div>
+                {userInfo && (
+                    <div>
+                        <h2>Welcome, {userInfo.username}</h2>
+                        <p>Email: {userInfo.email}</p>
+                    </div>
+                )}
+            </div>
+
         </div>
     );
 };
 
-export default ProfilePage;
+
+
+export default Profile;
+

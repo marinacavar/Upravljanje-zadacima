@@ -36,25 +36,35 @@ const Home = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
   const submitForm = async (data) => {
-    console.log(data);
     try {
-      const response = await axios.post('http://localhost:3001/login', data);
-      console.log(response.data);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('role', response.data.role);
-      localStorage.setItem('username', response.data.username);
-      if (response.data.role === 'admin') {
-        router.push('/admin');
-      } else {
-        router.push('/home');
-      }
+        const response = await axios.post('http://localhost:3001/login', data);
+        console.log(response.data); 
+
+        const { id, role, username, token } = response.data;
+
+        localStorage.setItem('token', token);
+        localStorage.setItem('role', role);
+        localStorage.setItem('username', username);
+        localStorage.setItem('userId', id); 
+
+        
+
+        if (role === 'admin') {
+            router.push('/admin');
+        } else {
+            router.push('/home');
+        }
     } catch (error) {
-      console.error("login error", error.response.data);
-      setErrorMessage(error.response.data.message); 
+        console.error("login error", error); 
+        if (error.response && error.response.data) {
+            setErrorMessage(error.response.data.message);
+        } else {
+            setErrorMessage("An error occurred while logging in");
+        }
     }
-  };
+};
+
 
   const goToSignUp = () => {
     router.push('/auth/sign-up');

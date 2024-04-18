@@ -82,37 +82,61 @@ exports.create = (req, res) => {
         });
 };
 
-
-
-exports.login = (req, res) => {
+/*exports.login = (req, res) => {
     const { email, password } = req.body;
 
-    
     User.findOne({ email })
         .then(user => {
             if (!user) {
                 return res.status(404).send({ message: "Email is incorrect!" });
             }
 
-            
             bcrypt.compare(password, user.password, (err, result) => {
                 if (err || !result) {
                     return res.status(401).send({ message: "Password is incorrect!" });
                 }
 
-                
-                const token = jwt.sign({ username: user.username, role: user.role }, process.env.JWT_SECRET, {
-                    expiresIn: '1h' 
+                const token = jwt.sign({ userId: user._id, username: user.username, email: user.email, role: user.role }, process.env.JWT_SECRET, {
+                    expiresIn: '1h'
+                });
+
+                res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).json({ token, username: user.username, email: user.email, role: user.role });
+            });
+        })
+        .catch(err => {
+            res.status(500).send({ message: "Error occurred while logging in" });
+        });
+};*/ 
+
+exports.login = (req, res) => {
+    const { email, password } = req.body;
+
+    User.findOne({ email })
+        .then(user => {
+            if (!user) {
+                return res.status(404).send({ message: "Email is incorrect!" });
+            }
+
+            bcrypt.compare(password, user.password, (err, result) => {
+                if (err || !result) {
+                    return res.status(401).send({ message: "Password is incorrect!" });
+                }
+
+                const token = jwt.sign({ id: user.id, username: user.username,  role: user.role }, process.env.JWT_SECRET, {
+                    expiresIn: '1h'
                 });
 
                 
-                res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).json({ token, username: user.username, role: user.role });
+                res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).json({ token, id: user.id, username: user.username,  role: user.role });
             });
         })
         .catch(err => {
             res.status(500).send({ message: "Error occurred while logging in" });
         });
 };
+
+
+
 
 exports.authenticateToken = (req, res, next) => {
     const token = req.cookies.jwt;
@@ -129,9 +153,6 @@ exports.authenticateToken = (req, res, next) => {
         next();
     });
 };
-
-
-
 exports.find = (req, res) => {
     const searchQuery = req.query.search; 
 
@@ -166,8 +187,9 @@ exports.findOne = (req, res) => {
             if (!user) {
                 return res.status(404).send({ message: `User with id ${id} not found` });
             }
-            
-            res.send(user);
+
+            const { username, email } = user;
+            res.send({ username, email });
         })
         .catch(err => {
             res.status(500).send({ message: `Error retrieving user with id ${id}` });
@@ -213,6 +235,3 @@ exports.delete = (req, res)=>{
             });
         });
 }
-
-
-
