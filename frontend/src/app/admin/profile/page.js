@@ -7,63 +7,106 @@ import { FiEdit3 } from "react-icons/fi";
 
 function Profile() {
     const [userInfo, setUserInfo] = useState(null);
-    const [isEditing, setIsEditing] = useState({username: false, email: false});
-    const [editableUserInfo, setEditableUserInfo] = useState({username: '', email: ''});
+    const [isEditing, setIsEditing] = useState({ username: false, email: false });
+    const [editableUserInfo, setEditableUserInfo] = useState({ username: '', email: '' });
     const [refresh, setRefresh] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const maxLength = 20;
     const [hasChanges, setHasChanges] = useState(false);
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
-        const userId = localStorage.getItem('userId'); 
+        const userId = localStorage.getItem('userId');
         if (userId) {
-            fetchUserInfo(userId); 
+            fetchUserInfo(userId);
         }
     }, [refresh]);
 
     useEffect(() => {
         if (userInfo && editableUserInfo) {
-            if (editableUserInfo.username !== userInfo.username || editableUserInfo.email !== userInfo.email) {
+            if (editableUserInfo.username !== userInfo.username || editableUserInfo.email !== userInfo.email || newPassword !== '') {
                 setHasChanges(true);
             } else {
                 setHasChanges(false);
             }
         }
-    }, [editableUserInfo, userInfo]);
+    }, [editableUserInfo, userInfo, newPassword]);
 
     const fetchUserInfo = async (userId) => {
         try {
-            const response = await axios.get(`http://localhost:3001/api/users/${userId}`); 
+            const response = await axios.get(`http://localhost:3001/api/users/${userId}`);
             setUserInfo(response.data);
-            setEditableUserInfo(response.data); 
-            setIsEditing({username: true, email: false}); 
+            setEditableUserInfo(response.data);
+            setIsEditing({ username: true, email: false });
         } catch (error) {
             console.error("Error fetching user information", error);
         }
     };
 
     const handleInputChange = (event, field) => {
-        setEditableUserInfo({...editableUserInfo, [field]: event.target.value});
+        setEditableUserInfo({ ...editableUserInfo, [field]: event.target.value });
         setInputValue(event.target.value);
         setHasChanges(true);
     };
     const handleSaveChanges = async () => {
         try {
             const userId = localStorage.getItem('userId');
-            const response = await axios.put(`http://localhost:3001/api/users/${userId}`, editableUserInfo);
+            let requestData = {
+                username: editableUserInfo.username,
+                email: editableUserInfo.email,
+            };
+    
+            if (currentPassword && newPassword) {
+                requestData = {
+                    ...requestData,
+                    currentPassword,
+                    newPassword,
+                };
+    
+                if (newPassword.length < 8) {
+                    setErrorMessage("New password must be at least 8 characters long");
+                    setTimeout(() => {
+                        setErrorMessage('');
+                    }, 3000);
+                    return;
+                }
+            }
+    
+            const response = await axios.put(`http://localhost:3001/api/users/${userId}`, requestData);
             setUserInfo(response.data);
-            setIsEditing(prevState => ({...prevState, username: false, email: false}));
+            setIsEditing(prevState => ({ ...prevState, username: false, email: false }));
             setRefresh(!refresh);
             setHasChanges(false);
+    
+            setCurrentPassword('');
+            setNewPassword('');
+            setSuccessMessage("User  updated successfully");
+            setTimeout(() => {
+                setSuccessMessage('');
+            }, 5000);
+            setErrorMessage('');
         } catch (error) {
+            if (error.response && error.response.status === 401) {
+                setErrorMessage("Your current password is incorrect. Please try again.");
+            } else {
+                setErrorMessage("Your current password is incorrect. Please try again.");
+            }
+            setTimeout(() => {
+                setErrorMessage('');
+            }, 5000);
             console.error("Error updating user information", error);
         }
     };
+    
 
     return (
         <div className='max-w-none flex lg:flex-row lg:items-start lg:justify-start flex-grow'>
             <div className="lg:w-1/5">
-                <Sidebar/>
+                <Sidebar  />
+
             </div>
             <div className="p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5 flex-grow mx-auto lg:mx-0 lg:ml-auto lg:mr-32 mt-14">
                 {userInfo && (
@@ -81,15 +124,15 @@ function Profile() {
                                     <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 flex items-center justify-between">
                                         {isEditing.username ? (
                                             <div className="relative flex">
-                                                <input 
-                                                    type="text" 
+                                                <input
+                                                    type="text"
                                                     className='w-60 border-b border-gray-300 focus:outline-none focus:border-blue-500'
-                                                    value={inputValue || editableUserInfo.username} 
-                                                    onChange={(e) => handleInputChange(e, 'username')} 
+                                                    value={inputValue || editableUserInfo.username}
+                                                    onChange={(e) => handleInputChange(e, 'username')}
                                                     maxLength={maxLength}
                                                 />
                                                 <p className="absolute right-0 bottom-0 text-right text-xs text-gray-500 w-60">{`${editableUserInfo.username.length}/${maxLength}`}</p>
-                                            </div>  
+                                            </div>
                                         ) : (
                                             <span className="self-center">{userInfo.username}</span>
                                         )}
@@ -100,27 +143,41 @@ function Profile() {
                                     <dt className="text-sm font-medium leading-6 text-gray-900">Email address</dt>
                                     <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{userInfo.email}</dd>
                                 </div>
-                                
+
                                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                     <dt className="text-sm font-medium leading-6 text-gray-900 self-center">Current Password</dt>
                                     <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                        <input type="password"
-                                         className='w-60 border-b border-gray-300 focus:outline-none focus:border-blue-500'/>
+                                        <input
+                                            type="password"
+                                            className='w-60 border-b border-gray-300 focus:outline-none focus:border-blue-500'
+                                            value={currentPassword}
+                                            onChange={(e) => setCurrentPassword(e.target.value)}
+                                        />
                                     </dd>
                                 </div>
                                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                     <dt className="text-sm font-medium leading-6 text-gray-900">New Password</dt>
                                     <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                        <input type="password"
-                                        className='w-60 border-b border-gray-300 focus:outline-none focus:border-blue-500' />
+                                        <input
+                                            type="password"
+                                            className='w-60 border-b border-gray-300 focus:outline-none focus:border-blue-500'
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                        />
                                     </dd>
                                 </div>
                             </dl>
                         </div>
-                        <button 
-                        onClick={handleSaveChanges} 
-                        disabled={!hasChanges}
-                        className={`flex items-center justify-center text-white font-semibold rounded-md py-2 px-20 ml-auto ${hasChanges ? 'bg-blue-700 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'}`}>
+                        {errorMessage && (
+                            <div className="px-4 mt-4 text-red-600">{errorMessage}</div>
+                        )}
+                        {successMessage && (
+                            <div className="px-4 mt-4 text-green-600">{successMessage}</div>
+                        )}
+                        <button
+                            onClick={handleSaveChanges}
+                            disabled={!hasChanges}
+                            className={`flex items-center justify-center text-white font-semibold rounded-md py-2 px-20 ml-auto ${hasChanges ? 'bg-blue-700 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'}`}>
                             Save
                         </button>
                     </div>

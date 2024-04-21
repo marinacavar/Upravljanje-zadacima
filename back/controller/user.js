@@ -82,32 +82,6 @@ exports.create = (req, res) => {
         });
 };
 
-/*exports.login = (req, res) => {
-    const { email, password } = req.body;
-
-    User.findOne({ email })
-        .then(user => {
-            if (!user) {
-                return res.status(404).send({ message: "Email is incorrect!" });
-            }
-
-            bcrypt.compare(password, user.password, (err, result) => {
-                if (err || !result) {
-                    return res.status(401).send({ message: "Password is incorrect!" });
-                }
-
-                const token = jwt.sign({ userId: user._id, username: user.username, email: user.email, role: user.role }, process.env.JWT_SECRET, {
-                    expiresIn: '1h'
-                });
-
-                res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).json({ token, username: user.username, email: user.email, role: user.role });
-            });
-        })
-        .catch(err => {
-            res.status(500).send({ message: "Error occurred while logging in" });
-        });
-};*/ 
-
 exports.login = (req, res) => {
     const { email, password } = req.body;
 
@@ -196,25 +170,50 @@ exports.findOne = (req, res) => {
         });
 };
 
-exports.update = (req, res) => {
-    if(!req.body){
-        return res.status(400).send({message:"Data can't be empty"})
+exports.update = async (req, res) => {
+    if (!req.body) {
+        return res.status(400).send({ message: "Data can't be empty" });
     }
 
-    const id=req.params.id;
-    User.findByIdAndUpdate(id,req.body,{useFindAndModify:false, new: true})
-    .then(data=>{
-        if(!data){
-            res.status(404).send({message:`Can't update user with ${id}`})
-        }else{
-            res.send(data)
-        }
-    })
-    .catch(err =>{
-        res.status(500).send({message: "Error Update user "})
-    })
-};
+    const id = req.params.id;
 
+    try {
+        const updatedUser = await User.findByIdAndUpdate(id, req.body, { useFindAndModify: false, new: true });
+
+        if (!updatedUser) {
+            return res.status(404).send({ message: `Can't update user with ${id}` });
+        }
+
+        if (req.body.username) {
+            await User.findByIdAndUpdate(id, { username: req.body.username }, { useFindAndModify: false });
+        }
+
+        if (req.body.currentPassword && req.body.newPassword) {
+            const user = await User.findById(id);
+
+            if (!user) {
+                return res.status(404).send({ message: `Can't update user with id ${id}` });
+            }
+
+            const isPasswordValid = await bcrypt.compare(req.body.currentPassword, user.password);
+            if (!isPasswordValid) {
+                return res.status(400).send({ message: "Current password is incorrect" });
+            }
+
+            if (req.body.newPassword.length < 8) {
+                return res.status(400).send({ message: "New password must be at least 8 characters long" });
+            }
+
+            const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+            await User.findByIdAndUpdate(id, { password: hashedPassword }, { useFindAndModify: false });
+        }
+
+        res.status(200).send({ message: "User information updated successfully" });
+    } catch (error) {
+        console.error("Error updating user", error);
+        res.status(500).send({ message: "Error updating user" });
+    }
+};
 
 exports.delete = (req, res)=>{
     const id=req.params.id;

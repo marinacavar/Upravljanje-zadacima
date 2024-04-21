@@ -53,12 +53,14 @@ const Users = () => {
             console.error('Error fetching users:', error);
         }
     };
-
+    
 
     const filteredUsers = users.filter(user =>
-        user.username.toLowerCase().includes(searchQuery.toLowerCase())
+        user.username && user.username.toLowerCase().includes(searchQuery.toLowerCase())
     );
     
+
+
 
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
@@ -174,11 +176,13 @@ const handleSubmit = async (event) => {
         
         console.log("Nakon ažuriranja, updatedUser:", updatedUser);
     };
+    
     const handleUpdate = async () => {
         try {
-            
-            const existingUser = users.find(user => (user.email === updatedUser.email || user.username === updatedUser.username) && user._id !== currentUser._id);
-            
+            const existingUser = users.find(user => 
+                (user.email === updatedUser.email || user.username === updatedUser.username) && user._id !== currentUser._id
+            );
+    
             if (existingUser) {
                 console.error('Error: User with the same email or username already exists.');
                
@@ -190,7 +194,10 @@ const handleSubmit = async (event) => {
             }
         
             const response = await axios.put(`http://localhost:3001/api/users/${currentUser._id}`, updatedUser);
-            setUsers(users.map(user => user._id === currentUser._id ? response.data : user));
+    
+           
+            fetchUsers();
+    
             setIsModalOpen(false);
             setCurrentPreviewedUser(response.data);
             setUpdateSuccessMessage('User updated successfully!');
@@ -207,7 +214,7 @@ const handleSubmit = async (event) => {
         }
     };
     
-    
+
     
     //read
 
