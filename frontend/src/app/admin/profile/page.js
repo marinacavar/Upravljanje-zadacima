@@ -4,6 +4,7 @@ import Sidebar from '../sidebar';
 import axios from 'axios';
 import { HiOutlineUser } from "react-icons/hi2";
 import { FiEdit3 } from "react-icons/fi";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function Profile() {
     const [userInfo, setUserInfo] = useState(null);
@@ -17,6 +18,9 @@ function Profile() {
     const [newPassword, setNewPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [backendError, setBackendError] = useState('');
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
 
     useEffect(() => {
         const userId = localStorage.getItem('userId');
@@ -51,6 +55,7 @@ function Profile() {
         setInputValue(event.target.value);
         setHasChanges(true);
     };
+
     const handleSaveChanges = async () => {
         try {
             const userId = localStorage.getItem('userId');
@@ -83,30 +88,29 @@ function Profile() {
     
             setCurrentPassword('');
             setNewPassword('');
-            setSuccessMessage("User  updated successfully");
+            setSuccessMessage("User updated successfully");
             setTimeout(() => {
                 setSuccessMessage('');
             }, 5000);
             setErrorMessage('');
+            setBackendError('');
         } catch (error) {
-            if (error.response && error.response.status === 401) {
-                setErrorMessage("Your current password is incorrect. Please try again.");
+            if (error.response && error.response.status === 400 && error.response.data.message) {
+                setBackendError(error.response.data.message);
             } else {
-                setErrorMessage("Your current password is incorrect. Please try again.");
+                setBackendError("Error updating user information");
             }
             setTimeout(() => {
-                setErrorMessage('');
+                setBackendError('');
             }, 5000);
             console.error("Error updating user information", error);
         }
     };
-    
 
     return (
         <div className='max-w-none flex lg:flex-row lg:items-start lg:justify-start flex-grow'>
             <div className="lg:w-1/5">
                 <Sidebar  />
-
             </div>
             <div className="p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5 flex-grow mx-auto lg:mx-0 lg:ml-auto lg:mr-32 mt-14">
                 {userInfo && (
@@ -144,26 +148,38 @@ function Profile() {
                                     <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{userInfo.email}</dd>
                                 </div>
 
-                                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 relative">
                                     <dt className="text-sm font-medium leading-6 text-gray-900 self-center">Current Password</dt>
                                     <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                                         <input
-                                            type="password"
+                                            type={showCurrentPassword ? "text" : "password"}
                                             className='w-60 border-b border-gray-300 focus:outline-none focus:border-blue-500'
                                             value={currentPassword}
                                             onChange={(e) => setCurrentPassword(e.target.value)}
                                         />
+                                        <span
+                                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                            className="absolute right-2 top-2 cursor-pointer"
+                                        >
+                                            {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
+                                        </span>
                                     </dd>
                                 </div>
-                                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 relative">
                                     <dt className="text-sm font-medium leading-6 text-gray-900">New Password</dt>
                                     <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                                         <input
-                                            type="password"
+                                            type={showNewPassword ? "text" : "password"}
                                             className='w-60 border-b border-gray-300 focus:outline-none focus:border-blue-500'
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
                                         />
+                                        <span
+                                            onClick={() => setShowNewPassword(!showNewPassword)}
+                                            className="absolute right-2 top-2 cursor-pointer"
+                                        >
+                                            {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                                        </span>
                                     </dd>
                                 </div>
                             </dl>
@@ -173,6 +189,9 @@ function Profile() {
                         )}
                         {successMessage && (
                             <div className="px-4 mt-4 text-green-600">{successMessage}</div>
+                        )}
+                        {backendError && (
+                            <div className="px-4 mt-4 text-red-600">{backendError}</div>
                         )}
                         <button
                             onClick={handleSaveChanges}

@@ -178,23 +178,20 @@ exports.update = async (req, res) => {
     const id = req.params.id;
 
     try {
-        const updatedUser = await User.findByIdAndUpdate(id, req.body, { useFindAndModify: false, new: true });
-
-        if (!updatedUser) {
-            return res.status(404).send({ message: `Can't update user with ${id}` });
+        const user = await User.findById(id);
+        
+        if (!user) {
+            return res.status(404).send({ message: `User with id ${id} not found` });
         }
 
-        if (req.body.username) {
-            await User.findByIdAndUpdate(id, { username: req.body.username }, { useFindAndModify: false });
+        if (req.body.username && req.body.username !== user.username) {
+            const existingUser = await User.findOne({ username: req.body.username });
+            if (existingUser) {
+                return res.status(400).send({ message: "Username already exists" });
+            }
         }
 
         if (req.body.currentPassword && req.body.newPassword) {
-            const user = await User.findById(id);
-
-            if (!user) {
-                return res.status(404).send({ message: `Can't update user with id ${id}` });
-            }
-
             const isPasswordValid = await bcrypt.compare(req.body.currentPassword, user.password);
             if (!isPasswordValid) {
                 return res.status(400).send({ message: "Current password is incorrect" });
@@ -208,12 +205,15 @@ exports.update = async (req, res) => {
             await User.findByIdAndUpdate(id, { password: hashedPassword }, { useFindAndModify: false });
         }
 
-        res.status(200).send({ message: "User information updated successfully" });
+        const updatedUser = await User.findByIdAndUpdate(id, req.body, { useFindAndModify: false, new: true });
+
+        res.status(200).send({ message: "User information updated successfully", user: updatedUser });
     } catch (error) {
         console.error("Error updating user", error);
         res.status(500).send({ message: "Error updating user" });
     }
 };
+
 
 exports.delete = (req, res)=>{
     const id=req.params.id;
