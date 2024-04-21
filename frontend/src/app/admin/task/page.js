@@ -429,7 +429,7 @@ const handleSubmit = async (event) => {
                             <textarea name="tasks" id="tasks" className="h-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Enter task" required=""/>
                         </div>
                         <div>
-                            <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
+                            <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Users</label>
                             {users.map(user => (
                                <div key={user.username} className="flex items-center">
                                   <input 
@@ -492,7 +492,7 @@ const handleSubmit = async (event) => {
             <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
                 {/* <!-- Modal header --> */}
                 <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-blue-600">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Update Product</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Update </h3>
                     <button type="button" onClick={() => setIsModalOpen(false)} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
                         <IoMdClose className="w-5 h-5"/>
                         <span className="sr-only">Close modal</span>
@@ -512,9 +512,9 @@ const handleSubmit = async (event) => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
-                            <select name="user" id="user" value={updatedTask.user} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                                <option value="" disabled selected>Select User</option>
+                            <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Users</label>
+                            <select name="user" id="user" value={updatedTask.user.username} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                <option value="" disabled >Select User</option>
                                 {users.map(user => (
                                     <option key={user.id} value={user.username}>{user.username}</option>
                                 ))}
@@ -577,7 +577,7 @@ const handleSubmit = async (event) => {
             <dl>
                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Task</dt>
                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.tasks}</dd>
-                <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">User</dt>
+                <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Users</dt>
                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.user}</dd>
                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Deadline</dt>
                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && formatDate (currentPreviewedTask.deadline)}</dd>
