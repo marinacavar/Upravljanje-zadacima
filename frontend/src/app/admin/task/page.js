@@ -229,7 +229,7 @@ const handleSubmit = async (event) => {
     <div className="lg:w-1/5">
         <Sidebar />
     </div>
-            <section className="bg-gray-100 dark:bg-gray-900 p-4 md:p-10 lg:p-20 antialiased flex-grow">
+            <section className="bg-gray-100 dark:bg-gray-900 p-4 md:p-10 lg:p-20 antialiased flex-grow mt-4">
                 <div className="mx-auto px-4 lg:px-12">
                     <div className="flex-1 ml-0 md:ml-16 lg:ml-48 lg:pl-2 pt-20 lg:pt-0">
                         <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
