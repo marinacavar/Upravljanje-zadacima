@@ -54,17 +54,18 @@ const Tasks = () => {
             console.error('Error fetching tasks:', error);
         }
     };
-    
-
 
     const fetchUsers = async () => {
         try {
             const response = await axios.get('http://localhost:3001/api/users');
-            setUsers(response.data);
+            // Filter users based on their role
+            const filteredUsers = response.data.filter(user => user.role === "user");
+            setUsers(filteredUsers);
         } catch (error) {
             console.error('Error fetching users:', error);
         }
     };
+    
 
     const indexOfLastTask = currentPage * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
@@ -431,17 +432,17 @@ const handleSubmit = async (event) => {
                         <div>
                             <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Users</label>
                             {users.map(user => (
-                               <div key={user.username} className="flex items-center">
-                                  <input 
-                                      type="checkbox" 
-                                      name="users" 
-                                      value={user.username} 
-                                      id={user.username} 
-                                      className="text-primary focus:ring-primary-600 h-4 w-4" 
-                                   />
-                                   <label htmlFor={user.username} className="ml-2">{user.username}</label>
-                               </div>
-                           ))}
+    <div key={user.username} className="flex items-center">
+        <input 
+            type="checkbox" 
+            name="users" 
+            value={user.username} 
+            id={user.username} 
+            className="text-primary focus:ring-primary-600 h-4 w-4" 
+        />
+        <label htmlFor={user.username} className="ml-2">{user.username}</label>
+    </div>
+))}
                         </div>
    
                         <div>

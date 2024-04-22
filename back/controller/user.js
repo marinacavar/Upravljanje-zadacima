@@ -187,18 +187,18 @@ exports.update = async (req, res) => {
         if (req.body.username && req.body.username !== user.username) {
             const existingUser = await User.findOne({ username: req.body.username });
             if (existingUser) {
-                return res.status(400).send({ message: "Username already exists" });
+                return res.status(400).send({ message: "Username already exists!" });
             }
         }
 
         if (req.body.currentPassword && req.body.newPassword) {
             const isPasswordValid = await bcrypt.compare(req.body.currentPassword, user.password);
             if (!isPasswordValid) {
-                return res.status(400).send({ message: "Current password is incorrect" });
+                return res.status(400).send({ message: "Current password is incorrect!" });
             }
 
             if (req.body.newPassword.length < 8) {
-                return res.status(400).send({ message: "New password must be at least 8 characters long" });
+                return res.status(400).send({ message: "New password must be at least 8 characters long!" });
             }
 
             const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
@@ -207,7 +207,7 @@ exports.update = async (req, res) => {
 
         const updatedUser = await User.findByIdAndUpdate(id, req.body, { useFindAndModify: false, new: true });
 
-        res.status(200).send({ message: "User information updated successfully", user: updatedUser });
+        res.status(200).send({ message: "User information updated successfully!", user: updatedUser });
     } catch (error) {
         console.error("Error updating user", error);
         res.status(500).send({ message: "Error updating user" });
