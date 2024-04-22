@@ -5,6 +5,7 @@ import axios from 'axios';
 import { HiOutlineUser } from "react-icons/hi2";
 import { FiEdit3 } from "react-icons/fi";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { set } from 'react-hook-form';
 
 function Profile() {
     const [userInfo, setUserInfo] = useState(null);
@@ -21,6 +22,8 @@ function Profile() {
     const [backendError, setBackendError] = useState('');
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     useEffect(() => {
         const userId = localStorage.getItem('userId');
@@ -65,6 +68,13 @@ function Profile() {
             };
     
             if (currentPassword && newPassword) {
+                if (newPassword !== confirmPassword) {
+                    setErrorMessage("Confirm password does not match new password");
+                    setTimeout(() => {
+                        setErrorMessage('');
+                    }, 3000);
+                    return;
+                }
                 requestData = {
                     ...requestData,
                     currentPassword,
@@ -88,6 +98,7 @@ function Profile() {
     
             setCurrentPassword('');
             setNewPassword('');
+            setConfirmPassword('');
             setSuccessMessage("User updated successfully");
             setTimeout(() => {
                 setSuccessMessage('');
@@ -147,39 +158,61 @@ function Profile() {
                                     <dt className="text-sm font-medium leading-6 text-gray-900">Email address</dt>
                                     <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{userInfo.email}</dd>
                                 </div>
-
                                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 relative">
                                     <dt className="text-sm font-medium leading-6 text-gray-900 self-center">Current Password</dt>
                                     <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                        <input
-                                            type={showCurrentPassword ? "text" : "password"}
-                                            className='w-60 border-b border-gray-300 focus:outline-none focus:border-blue-500'
-                                            value={currentPassword}
-                                            onChange={(e) => setCurrentPassword(e.target.value)}
-                                        />
-                                        <span
-                                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                            className="absolute right-2 top-2 cursor-pointer"
-                                        >
-                                            {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
-                                        </span>
+                                        <div className="relative flex items-center">
+                                            <input
+                                                type={showCurrentPassword ? "text" : "password"}
+                                                className='w-60 border-b border-gray-300 focus:outline-none focus:border-blue-500'
+                                                value={currentPassword}
+                                                onChange={(e) => setCurrentPassword(e.target.value)}
+                                            />
+                                            <span
+                                                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                                className="cursor-pointer ml-2"
+                                            >
+                                                {showCurrentPassword ? <FaEye className="text-gray-400 w-5 h-5"/> : <FaEyeSlash className="text-gray-400 w-5 h-5" />}
+                                            </span>
+                                        </div>
                                     </dd>
                                 </div>
                                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 relative">
                                     <dt className="text-sm font-medium leading-6 text-gray-900">New Password</dt>
                                     <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                        <input
-                                            type={showNewPassword ? "text" : "password"}
-                                            className='w-60 border-b border-gray-300 focus:outline-none focus:border-blue-500'
-                                            value={newPassword}
-                                            onChange={(e) => setNewPassword(e.target.value)}
-                                        />
-                                        <span
-                                            onClick={() => setShowNewPassword(!showNewPassword)}
-                                            className="absolute right-2 top-2 cursor-pointer"
-                                        >
-                                            {showNewPassword ? <FaEyeSlash /> : <FaEye />}
-                                        </span>
+                                        <div className="relative flex items-center">
+                                            <input
+                                                type={showNewPassword ? "text" : "password"}
+                                                className='w-60 border-b border-gray-300 focus:outline-none focus:border-blue-500'
+                                                value={newPassword}
+                                                onChange={(e) => setNewPassword(e.target.value)}
+                                            />
+                                            <span
+                                                onClick={() => setShowNewPassword(!showNewPassword)}
+                                                className="cursor-pointer ml-2"
+                                            >
+                                                {showNewPassword ? <FaEye className="text-gray-400 w-5 h-5"/> : <FaEyeSlash className="text-gray-400 w-5 h-5"/>}
+                                            </span>
+                                        </div>
+                                    </dd>
+                                </div>
+                                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 relative">
+                                    <dt className="text-sm font-medium leading-6 text-gray-900">Confirm Password</dt>
+                                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                                        <div className="relative flex items-center">
+                                            <input
+                                                type={showConfirmPassword ? "text" : "password"}
+                                                className='w-60 border-b border-gray-300 focus:outline-none focus:border-blue-500'
+                                                value={confirmPassword}
+                                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                            />
+                                            <span
+                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                className="cursor-pointer ml-2"
+                                            >
+                                                {showConfirmPassword ? <FaEye className="text-gray-400 w-5 h-5" /> : <FaEyeSlash className="text-gray-400 w-5 h-5"/>}
+                                            </span>
+                                        </div>
                                     </dd>
                                 </div>
                             </dl>
