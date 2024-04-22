@@ -5,7 +5,8 @@ import axios from 'axios';
 import { HiOutlineUser } from "react-icons/hi2";
 import { FiEdit3 } from "react-icons/fi";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { set } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { MdDeleteForever } from "react-icons/md";
 
 function Profile() {
     const [userInfo, setUserInfo] = useState(null);
@@ -24,6 +25,7 @@ function Profile() {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState("");
+    const router = useRouter();
 
     useEffect(() => {
         const userId = localStorage.getItem('userId');
@@ -118,6 +120,23 @@ function Profile() {
         }
     };
 
+
+    const handleDeleteUser = async () => {
+        const confirmDelete = window.confirm("Želite li izbrisati korisnika?");
+        if (confirmDelete) {
+            try {
+                const userId = localStorage.getItem('userId');
+                await axios.delete(`http://localhost:3001/api/users/${userId}`);
+                // Log out the user
+                localStorage.removeItem('userId');
+                // Redirect to home page
+                router.push('/');
+            } catch (error) {
+                console.error("Error deleting user", error);
+            }
+        }
+    };
+
     return (
         <div className='max-w-none flex lg:flex-row lg:items-start lg:justify-start flex-grow'>
             <div className="lg:w-1/5">
@@ -127,8 +146,11 @@ function Profile() {
                 {userInfo && (
                     <div>
                         <div className="px-4 sm:px-0">
-                            <h3 className="text-base font-semibold leading-7 text-gray-900 flex items-center">
+                            <h3 className="text-base font-semibold leading-7 text-gray-900 flex justify-between items-center">
+                                <div className="flex items-center">
                                 <HiOutlineUser className="mr-2" size={22} /> Personal details
+                                </div>
+                                <MdDeleteForever className="cursor-pointer text-blue-800 text-3xl" onClick={handleDeleteUser} />
                             </h3>
                             <p className="mt-1 text-sm leading-6 text-gray-500">Update your personal information</p>
                         </div>
