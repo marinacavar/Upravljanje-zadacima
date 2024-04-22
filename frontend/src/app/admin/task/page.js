@@ -432,17 +432,17 @@ const handleSubmit = async (event) => {
                         <div>
                             <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Users</label>
                             {users.map(user => (
-    <div key={user.username} className="flex items-center">
-        <input 
-            type="checkbox" 
-            name="users" 
-            value={user.username} 
-            id={user.username} 
-            className="text-primary focus:ring-primary-600 h-4 w-4" 
-        />
-        <label htmlFor={user.username} className="ml-2">{user.username}</label>
-    </div>
-))}
+                                <div key={user.username} className="flex items-center">
+                                    <input 
+                                        type="checkbox" 
+                                        name="users" 
+                                        value={user.username} 
+                                        id={user.username} 
+                                        className="text-primary focus:ring-primary-600 h-4 w-4" 
+                                    />
+                                    <label htmlFor={user.username} className="ml-2">{user.username}</label>
+                                </div>
+                            ))}
                         </div>
    
                         <div>
@@ -454,7 +454,6 @@ const handleSubmit = async (event) => {
                           <select id="status" name="status" value={updatedTask.status || ""} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                               <option value=""disabled >Select status</option>
                               <option value="Active">Active</option>
-                              <option value="Expired">Expired</option>
                               <option value="Done">Done</option>
                          </select>
                        </div>    
@@ -531,7 +530,6 @@ const handleSubmit = async (event) => {
                           <label htmlFor="status" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
                           <select id="status" name="status" value={updatedTask.status} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                             <option value="Active">Active</option>
-                            <option value="Expired">Expired</option>
                             <option value="Done">Done</option>
                            </select>
                        </div>    
