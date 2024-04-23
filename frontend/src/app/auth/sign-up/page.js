@@ -71,7 +71,7 @@ const SignUp = () => {
                 <div className="bg-white rounded-2xl shadow-2xl w-full lg:w-2/3 max-w-lg">
                     <div className="w-full lg:w-3/5 p-5 mx-auto">
                         <div className="text-left font-bold">
-                            <span className="text-blue-800">Company</span>Name
+                            <span className="text-blue-800">Task</span>Management
                         </div>
                         <div className="py-10">
                             <h2 className="text-2xl font-bold text-center text-blue-800">Create an Account</h2>

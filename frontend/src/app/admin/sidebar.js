@@ -3,13 +3,12 @@ import { Disclosure } from '@headlessui/react';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { GiHamburgerMenu } from 'react-icons/gi';
-import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import { FaUsers } from "react-icons/fa";
 import { FaTasks } from "react-icons/fa";
 import Link from 'next/link';
 
-export default function Sidebar({ isVisible, toggleSidebar }) {
+export default function Sidebar({ isVisible }) {
     const router = useRouter();
     const [username, setUsername] = useState('');
 
@@ -51,14 +50,10 @@ export default function Sidebar({ isVisible, toggleSidebar }) {
           <div className="flex flex-col justify-start items-center">
             <h1 className='text-base text-center cursor-pointer font-bold text-blue-900 border-b border-gray-100 pb-4 w-full'>Admin Panel</h1>
             <div className="my-4 border-b border-grey-100 pb-4">
-              <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg">
-                <MdOutlineSpaceDashboard className="text-2xl text-blue-700 group-hover:text-white" />
-                <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'>Dashboard</h3>
-              </div>
-              <Link href="/admin/profile">
+              <Link href="/admin/task">
                 <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg">
-                  <CgProfile className="text-2xl text-blue-700 group-hover:text-white" />
-                  <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'><p className="text-base text-blue-900 group-hover:text-white font-semibold">{username}</p></h3>
+                  <FaTasks className="text-2xl text-blue-700 group-hover:text-white" />
+                  <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'>Task</h3>
                 </div>
               </Link>
               <Link href="/admin/users">
@@ -67,10 +62,10 @@ export default function Sidebar({ isVisible, toggleSidebar }) {
                   <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'>Users</h3>
                 </div>
               </Link>
-              <Link href="/admin/task">
+              <Link href="/admin/profile">
                 <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg">
-                  <FaTasks className="text-2xl text-blue-700 group-hover:text-white" />
-                  <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'>Task</h3>
+                  <CgProfile className="text-2xl text-blue-700 group-hover:text-white" />
+                  <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'><p className="text-base text-blue-900 group-hover:text-white font-semibold">{username}</p></h3>
                 </div>
               </Link>
             </div>
