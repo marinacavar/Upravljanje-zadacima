@@ -76,7 +76,7 @@ const Home = () => {
         <div className="bg-white rounded-2xl shadow-2xl flex flex-col lg:flex-row w-full lg:w-2/3 max-w-4xl">
           <div className="w-full lg:w-3/5 p-5">
             <div className="text-left font-bold">
-              <span className="text-blue-800">Company</span>Name
+              <span className="text-blue-800">Task</span>Management
             </div>
             <div className="py-24">
               <h2 className="text-3xl font-bold text-blue-800">Sign in to Account</h2>

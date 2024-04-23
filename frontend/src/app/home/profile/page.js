@@ -7,6 +7,7 @@ import { FiEdit3 } from "react-icons/fi";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { MdDeleteForever } from "react-icons/md";
+import { MdErrorOutline } from "react-icons/md";
 
 function Profile() {
     const [userInfo, setUserInfo] = useState(null);
@@ -25,6 +26,7 @@ function Profile() {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -120,21 +122,24 @@ function Profile() {
         }
     };
 
-
     const handleDeleteUser = async () => {
-        const confirmDelete = window.confirm("Želite li izbrisati korisnika?");
-        if (confirmDelete) {
-            try {
-                const userId = localStorage.getItem('userId');
-                await axios.delete(`http://localhost:3001/api/users/${userId}`);
-                // Log out the user
-                localStorage.removeItem('userId');
-                // Redirect to home page
-                router.push('/');
-            } catch (error) {
-                console.error("Error deleting user", error);
-            }
+        setIsModalOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        setIsModalOpen(false);
+        try {
+            const userId = localStorage.getItem('userId');
+            await axios.delete(`http://localhost:3001/api/users/${userId}`);
+            localStorage.removeItem('userId');
+            router.push('/');
+        } catch (error) {
+            console.error("Error deleting user", error);
         }
+    };
+
+    const handleCancelDelete = () => {
+        setIsModalOpen(false);
     };
 
     return (
@@ -255,6 +260,28 @@ function Profile() {
                             Save
                         </button>
                     </div>
+                )}
+
+                {isModalOpen && (
+                <div className="fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]">
+                    <div className="w-full max-w-md bg-white shadow-lg rounded-md p-6 relative">
+                        <div className="my-8 text-center">
+                            <MdErrorOutline className="text-6xl inline"/>
+                            <h4 className="text-xl font-semibold mt-6">Your account will be deleted permanently!</h4>
+                            <p className="text-sm text-gray-500 mt-4">Are you sure to proceed?</p>
+                        </div>
+                        <div className="text-right space-x-4">
+                        </div>
+                        <div className="flex max-sm:flex-col gap-4">
+                            <button type="button"
+                                className="px-6 py-2.5 rounded w-full text-sm font-semibold border-none outline-none bg-gray-200 hover:bg-gray-300"
+                                onClick={handleCancelDelete}>I am not sure</button>
+                            <button type="button"
+                                className="px-6 py-2.5 rounded w-full text-white text-sm font-semibold border-none outline-none bg-blue-700 hover:bg-blue-600"
+                                onClick={handleConfirmDelete}>Remove my account</button>
+                        </div>
+                    </div>
+                </div>
                 )}
             </div>
         </div>
