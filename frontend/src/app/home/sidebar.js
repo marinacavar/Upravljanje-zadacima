@@ -63,12 +63,12 @@ export default function Sidebar() {
                   <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'><p className="text-base text-blue-900 group-hover:text-white font-semibold">{username}</p></h3>
                 </div>
               </Link>
-            <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto">
-              {/* need icons */}
-              <FaTasks className="text-2xl text-blue-700 group-hover:text-white" />
-              <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'>Task</h3>
-            </div>
-            
+ <Link href="/home/task">
+   <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg">
+     <FaTasks className="text-2xl text-blue-700 group-hover:text-white" />
+     <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'>Task</h3>
+   </div>
+ </Link>
           </div>
            <div className="absolute bottom-5 left-13 flex items-center justify-center">
            <div

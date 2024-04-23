@@ -51,9 +51,9 @@ const Home = () => {
         
 
         if (role === 'admin') {
-            router.push('/admin');
+            router.push('/admin/task');
         } else {
-            router.push('/home');
+            router.push('/home/task');
         }
     } catch (error) {
         console.error("login error", error); 
