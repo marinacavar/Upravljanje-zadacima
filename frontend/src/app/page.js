@@ -62,6 +62,9 @@ const Home = () => {
         } else {
             setErrorMessage("An error occurred while logging in");
         }
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 5000);
     }
 };
 

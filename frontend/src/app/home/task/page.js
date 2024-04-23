@@ -34,6 +34,7 @@ const Tasks = () => {
     const [username, setUsername] = useState('');
     useEffect(() => {
         const storedUsername = localStorage.getItem('username');
+        console.log('Stored Username:', storedUsername);
         if (storedUsername) {
             setUsername(storedUsername);
         }
@@ -48,21 +49,23 @@ const Tasks = () => {
           document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [username, searchQuery]);
-    
-    
-    
     const fetchTasks = async () => {
         try {
             const response = await axios.get(`http://localhost:3001/task?search=${searchQuery}`);
-            
-            const filteredTasks = response.data.filter(task => task.user.includes(username));
+            const filteredTasks = response.data.filter(task => {
+                if (Array.isArray(task.user)) {
+                    const shouldInclude = task.user.some(user => user.includes(username));
+                    return shouldInclude;
+                } else {
+                    return false; 
+                }
+            });
             setTasks(filteredTasks);
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
     };
-
-
+    
     const indexOfLastTask = currentPage * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
     const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
