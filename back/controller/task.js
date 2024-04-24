@@ -31,33 +31,6 @@ exports.create = (req, res) => {
 
 
 
-/*exports.find = (req, res) => {
-    if(req.query.id){
-        const id=req.query.id;
-    
-        Task.findById(id)
-        .then(data => {
-            if(!data){
-                res.status(404).send({message:"Not found task with id"+id})
-            }else{
-                res.send(data)
-            }
-        })
-        .catch(err => {
-            res.status(500).send({message:"Error retriving task with id"+id})
-        })
-
-    }else{
-        Task.find()
-        .then(task => {
-           res.send(task)
-        })
-        .catch(err =>{
-            res.status(500).send({message: err.message || "Error occure while retriving task information"})
-       })
-
-    }
-};*/
 exports.find = (req, res) => {
     const searchQuery = req.query.search; 
 
