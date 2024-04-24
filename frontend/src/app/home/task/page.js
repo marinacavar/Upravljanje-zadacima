@@ -34,7 +34,6 @@ const Tasks = () => {
     const [username, setUsername] = useState('');
     useEffect(() => {
         const storedUsername = localStorage.getItem('username');
-        console.log('Stored Username:', storedUsername);
         if (storedUsername) {
             setUsername(storedUsername);
         }
@@ -61,6 +60,7 @@ const Tasks = () => {
                 }
             });
             setTasks(filteredTasks);
+            console.log("Tasks:", filteredTasks);
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
