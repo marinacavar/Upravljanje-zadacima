@@ -14,7 +14,7 @@ import axios from 'axios';
 const Tasks = () => {
     
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [currentTask, setCurrentTask] = useState(null);
+    const [currentTask, setCurrentTask] = useState({});
     const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10);
@@ -54,6 +54,12 @@ const Tasks = () => {
             console.error('Error fetching tasks:', error);
         }
     };
+
+//     useEffect(() => {
+//     if (currentTask) {
+//         
+//     }
+// }, [currentTask]);
 
     const fetchUsers = async () => {
         try {
@@ -102,12 +108,13 @@ const handleSubmit = async (event) => {
 
     const form = event.target;
     const formData = new FormData(form);
+
     const selectedUsers = Array.from(formData.getAll('users'));
     const usersString = selectedUsers.join(' ');
 
     const taskData = {
         tasks: formData.get('tasks'),
-        users: usersString, 
+        users: usersString.split(' '), 
         deadline: formData.get('deadline'),
         status: formData.get('status')
     };
@@ -127,11 +134,9 @@ const handleSubmit = async (event) => {
     }
 };
 
-
     const handleModalToggle = () => {
         setIsAddModalOpen(!isAddModalOpen);
     };
-
 
 
     //edit
@@ -143,25 +148,31 @@ const handleSubmit = async (event) => {
         setIsModalOpen(true); 
         setIsPreviewModalOpen(false);
         setCameFromReadModal(cameFromRead);
-        
-        
     };
     
     const handleInputChange = (event) => {
-        console.log("Naziv svojstva:", event.target.name);
-        console.log("Vrijednost svojstva:", event.target.value);
+        const target = event.target;
+        let value = target.type === 'checkbox' ? target.checked : target.value;
+        let name = target.name;
     
-        
-        console.log("Prije ažuriranja, updatedTask:", updatedTask);
-    
-        
-        setUpdatedTask({
-            ...updatedTask,
-            [event.target.name]: event.target.value
-        });
-    
-        
-        console.log("Nakon ažuriranja, updatedTask:", updatedTask);
+        if (target.type === 'checkbox') {
+            let updatedValue = Array.isArray(updatedTask.user) ? updatedTask.user : [];
+            const user = users.find(user => user.username === target.value);
+            if (value) {
+                updatedValue = [...updatedValue, user.username];
+            } else {
+                updatedValue = updatedValue.filter(item => item !== user.username);
+            }
+            setUpdatedTask({
+                ...updatedTask,
+                user: updatedValue
+            });
+        } else {
+            setUpdatedTask({
+                ...updatedTask,
+                [name]: value
+            });
+        }
     };
     
     const handleUpdate = async () => {
@@ -287,7 +298,7 @@ const handleSubmit = async (event) => {
                                 {currentTasks.map((task, index) => (
                                     <tr key={task._id} className="border-b dark:border-gray-700">
                                         <td className="px-4 py-3 font-medium text-gray-900 whitespace-normal dark:text-white text-center break-all overflow-auto">{task.tasks}</td>
-                                        <td className="px-4 py-3 text-center break-all overflow-auto  ">{task.user}</td>
+                                        <td className="px-4 py-3 text-center break-all overflow-auto  ">{task.user.join(' ')}</td>
                                         <td className="px-4 py-3 text-center ">{formatDate(task.deadline)}</td>
                                         <td className="px-4 py-3 text-center ">{task.status}</td>
                                         <td className="px-4 py-3 items-center text-center" ref={(el) => (dropdownRefs.current[index] = el)}>
@@ -419,10 +430,7 @@ const handleSubmit = async (event) => {
                                 <option value="Done">Done</option>
                             </select>
                         </div>    
-                        
-                        
         
-                        
                         </div>
                         <button type="submit" className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none px-4 py-2 rounded-lg">
                         <svg className="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -475,12 +483,22 @@ const handleSubmit = async (event) => {
                             </div>
                             <div>
                                 <label htmlFor="user" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Users</label>
-                                <select name="user" id="user" value={updatedTask.user.username} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                                    <option value="" disabled >Select User</option>
-                                    {users.map(user => (
-                                        <option key={user.id} value={user.username}>{user.username}</option>
-                                    ))}
-                                </select>
+                                
+                                {users.map((user , index)=> (
+                                    <div key={index} className="flex items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            name="user" 
+                                            value={user.username} 
+                                            id={user.username} 
+                                            checked={updatedTask.user && updatedTask.user.includes(user.username)}
+                                            onChange={handleInputChange} 
+                                            className="text-primary focus:ring-primary-600 h-4 w-4" 
+                                        />
+                                        
+                                        <label htmlFor={user.username} className="ml-2">{user.username}</label>
+                                    </div>
+                                ))}
                             </div>
                             <div>
                                 <label htmlFor="deadline" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deadline</label>
@@ -516,12 +534,12 @@ const handleSubmit = async (event) => {
         
     )}
     <div>
-            {updateSuccessMessage && (
-                <div className="fixed top-0 right-0 mt-4 mr-4 bg-green-500 text-white px-4 py-2 rounded">
-                    {updateSuccessMessage}
-                </div>
-            )}
-        </div>
+        {updateSuccessMessage && (
+            <div className="fixed top-0 right-0 mt-4 mr-4 bg-green-500 text-white px-4 py-2 rounded">
+                {updateSuccessMessage}
+            </div>
+        )}
+    </div>
     {/* <!-- Read modal --> */}
     <div id="readProductModal" className={`${isPreviewModalOpen ? '' : 'hidden'} fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50`}>
         <div className="relative p-4 w-full max-w-xl">
@@ -539,7 +557,7 @@ const handleSubmit = async (event) => {
                     <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Task</dt>
                     <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.tasks}</dd>
                     <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Users</dt>
-                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.user}</dd>
+                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.user.join(' ')}</dd>
                     <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Deadline</dt>
                     <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && formatDate (currentPreviewedTask.deadline)}</dd>
                     <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Status</dt>
