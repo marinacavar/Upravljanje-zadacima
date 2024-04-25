@@ -64,7 +64,6 @@ const Tasks = () => {
     const fetchUsers = async () => {
         try {
             const response = await axios.get('http://localhost:3001/api/users');
-            // Filter users based on their role
             const filteredUsers = response.data.filter(user => user.role === "user");
             setUsers(filteredUsers);
         } catch (error) {
