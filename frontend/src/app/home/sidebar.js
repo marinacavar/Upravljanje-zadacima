@@ -8,6 +8,7 @@ import { CgProfile, CgLogOut } from "react-icons/cg";
 import { FaTasks } from "react-icons/fa";
 import Link from 'next/link';
 
+
 export default function Sidebar() {
   const router = useRouter();
   const [username, setUsername] = useState('');
@@ -62,13 +63,19 @@ export default function Sidebar() {
                   <CgProfile className="text-2xl text-blue-700 group-hover:text-white" />
                   <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'><p className="text-base text-blue-900 group-hover:text-white font-semibold">{username}</p></h3>
                 </div>
-              </Link>
- <Link href="/home/task">
-   <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg">
-     <FaTasks className="text-2xl text-blue-700 group-hover:text-white" />
-     <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'>Task</h3>
-   </div>
- </Link>
+           </Link>
+           <Link href="/home/task">
+                <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg">
+                  <FaTasks className="text-2xl text-blue-700 group-hover:text-white" />
+                  <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'>Task</h3>
+                </div>
+          </Link>
+          <Link href="/home/myTask">
+             <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg">
+               <FaTasks className="text-2xl text-blue-700 group-hover:text-white" />
+               <h3 className='text-base text-blue-900 group-hover:text-white font-semibold'>My Tasks</h3>
+             </div>
+         </Link>
           </div>
           <div className="absolute bottom-5 left-13 flex items-center justify-center">
            <div

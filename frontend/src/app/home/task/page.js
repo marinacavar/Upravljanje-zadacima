@@ -7,12 +7,8 @@ import { FiEdit } from "react-icons/fi";
 import { FaEye } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { IoMdAdd, IoMdClose } from "react-icons/io";
-
 import axios from 'axios';
-
-
 const Tasks = () => {
-    
     const [currentTask, setCurrentTask] = useState(null);
     const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +17,6 @@ const Tasks = () => {
     const dropdownRefs = useRef([]);
     const [users, setUsers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-
     // update
     const [updatedTask, setUpdatedTask] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,15 +25,14 @@ const Tasks = () => {
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const [currentPreviewedTask, setCurrentPreviewedTask] = useState(null);
     const [cameFromReadModal, setCameFromReadModal] = useState(false);
-
     const [username, setUsername] = useState('');
     useEffect(() => {
         const storedUsername = localStorage.getItem('username');
+        console.log('Stored Username:', storedUsername);
         if (storedUsername) {
             setUsername(storedUsername);
         }
     }, []);
-
     useEffect(() => {
         if (username || searchQuery) {
             fetchTasks();
@@ -56,23 +50,18 @@ const Tasks = () => {
                     const shouldInclude = task.user.some(user => user.includes(username));
                     return shouldInclude;
                 } else {
-                    return false; 
+                    return false;
                 }
             });
             setTasks(filteredTasks);
-            console.log("Tasks:", filteredTasks);
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
     };
-    
     const indexOfLastTask = currentPage * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
     const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
-
-    
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
     const toggleDropdown = (index) => {
         setOpenDropdowns((prevState) => {
             const updatedDropdowns = [...prevState];
@@ -80,7 +69,6 @@ const Tasks = () => {
             return updatedDropdowns;
         });
     };
-
     const handleClickOutside = (event) => {
         dropdownRefs.current.forEach((ref, index) => {
             if (ref && !ref.contains(event.target)) {
@@ -92,38 +80,25 @@ const Tasks = () => {
             }
         });
     };
-    
-
     //edit
-    
     const handleEditClick = (task, cameFromRead = false) => {
-        console.log("Edit button clicked, task:", task); 
-        setCurrentTask(task); 
-        setUpdatedTask(task); 
-        setIsModalOpen(true); 
+        console.log("Edit button clicked, task:", task);
+        setCurrentTask(task);
+        setUpdatedTask(task);
+        setIsModalOpen(true);
         setIsPreviewModalOpen(false);
         setCameFromReadModal(cameFromRead);
-        
-        
     };
-    
     const handleInputChange = (event) => {
         console.log("Naziv svojstva:", event.target.name);
         console.log("Vrijednost svojstva:", event.target.value);
-    
-        
         console.log("Prije ažuriranja, updatedTask:", updatedTask);
-    
-        
         setUpdatedTask({
             ...updatedTask,
             [event.target.name]: event.target.value
         });
-    
-        
         console.log("Nakon ažuriranja, updatedTask:", updatedTask);
     };
-    
     const handleUpdate = async () => {
         try {
             const response = await axios.put(`http://localhost:3001/task/${currentTask._id}`, updatedTask);
@@ -134,7 +109,6 @@ const Tasks = () => {
             setTimeout(() => {
                 setUpdateSuccessMessage('');
             }, 5000);
-            
             if (cameFromReadModal) {
                 setIsPreviewModalOpen(true);
                 setCameFromReadModal(false);
@@ -146,21 +120,16 @@ const Tasks = () => {
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0'); 
+        const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
-
         return `${day}.${month}.${year}.`;
     }
-
-    
     //read
-
     const handlePreviewClick = (task) => {
         setCurrentPreviewedTask(task);
         setIsPreviewModalOpen(true);
         setIsModalOpen (false);
     };
-
   
   return (
     <div className='max-w-none flex-col lg:flex-row lg:items-start lg:justify-start flex-grow'>
