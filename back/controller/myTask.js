@@ -20,6 +20,7 @@ exports.create = (req, res) => {
     const task = new myTask({
         tasks: req.body.tasks, 
         deadline: req.body.deadline,
+        hours: req.body.hours,
         status: req.body.status,
         userId: userId  
     });

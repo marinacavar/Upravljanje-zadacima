@@ -14,6 +14,9 @@ var schema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    hours: {
+        type: String,
+    },
     status: {
         type: String,
         required: true
