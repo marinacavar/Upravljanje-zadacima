@@ -115,6 +115,7 @@ const handleSubmit = async (event) => {
         tasks: formData.get('tasks'),
         users: usersString.split(' '), 
         deadline: formData.get('deadline'),
+        hours: formData.get('hours'),
         status: formData.get('status')
     };
     console.log('Task data:', taskData);
@@ -287,6 +288,7 @@ const handleSubmit = async (event) => {
                                         <th scope="col" className="px-4 py-4 w-1/5 text-center">Task</th>
                                         <th scope="col" className="px-4 py-3 w-1/5 text-center">User</th>
                                         <th scope="col" className="px-4 py-3 w-1/5 text-center">Deadline</th>
+                                        <th scope='col' className="px-4 py-3 w-1/5 text-center">Hours</th>
                                         <th scope="col" className="px-4 py-3 w-1/5 text-center">Status</th>
                                         <th scope="col" className="px-4 py-3 w-1/5 text-center">
                                             <span className="sr-only text-right">Actions</span>
@@ -299,6 +301,7 @@ const handleSubmit = async (event) => {
                                         <td className="px-4 py-3 font-medium text-gray-900 whitespace-normal dark:text-white text-center break-all overflow-auto">{task.tasks}</td>
                                         <td className="px-4 py-3 text-center break-all overflow-auto  ">{task.user.join(' ')}</td>
                                         <td className="px-4 py-3 text-center ">{formatDate(task.deadline)}</td>
+                                        <td className="px-4 py-3 text-center ">{task.hours}</td>
                                         <td className="px-4 py-3 text-center ">{task.status}</td>
                                         <td className="px-4 py-3 items-center text-center" ref={(el) => (dropdownRefs.current[index] = el)}>
                                             <button
@@ -420,6 +423,13 @@ const handleSubmit = async (event) => {
                             <div>
                                 <label htmlFor="deadline" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deadline</label>
                                 <input type="date" name="deadline" id="deadline" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Enter deadline" required=""/>
+                            </div>
+                            <div>
+                                <label htmlFor="hours" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hours</label>
+                                <input type="time" name="hours" id="hours" value={updatedTask.hours} onChange={handleInputChange}
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 "
+                                required=""
+                                />
                             </div>
                             <div>
                             <label htmlFor="status" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
@@ -559,6 +569,8 @@ const handleSubmit = async (event) => {
                     <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.user.join(' ')}</dd>
                     <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Deadline</dt>
                     <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && formatDate (currentPreviewedTask.deadline)}</dd>
+                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Hours</dt>
+                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.hours}</dd>
                     <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Status</dt>
                     <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.status}</dd>
                     

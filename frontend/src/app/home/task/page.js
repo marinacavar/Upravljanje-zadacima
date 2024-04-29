@@ -175,6 +175,7 @@ const Tasks = () => {
                                             <th scope="col" className="px-4 py-4 w-1/5 text-center">Task</th>
                                             <th scope="col" className="px-4 py-3 w-1/5 text-center">User</th>
                                             <th scope="col" className="px-4 py-3 w-1/5 text-center">Deadline</th>
+                                            <th scope="col" className="px-4 py-3 w-1/5 text-center">Hours</th>
                                             <th scope="col" className="px-4 py-3 w-1/5 text-center">Status</th>
                                             <th scope="col" className="px-4 py-3 w-1/5 text-center">
                                                 <span className="sr-only text-right">Actions</span>
@@ -187,6 +188,7 @@ const Tasks = () => {
                                             <td className="px-4 py-3 font-medium text-gray-900 whitespace-normal dark:text-white text-center break-all overflow-auto">{task.tasks}</td>
                                             <td className="px-4 py-3 text-center break-all overflow-auto  ">{task.user.join(' ')}</td>
                                             <td className="px-4 py-3 text-center ">{formatDate(task.deadline)}</td>
+                                            <td className="px-4 py-3 text-center ">{task.hours}</td>
                                             <td className="px-4 py-3 text-center ">{task.status}</td>
                                             <td className="px-4 py-3 items-center text-center" ref={(el) => (dropdownRefs.current[index] = el)}>
                                                 <button
@@ -288,7 +290,11 @@ const Tasks = () => {
                             <option value="Active">Active</option>
                             <option value="Done">Done</option>
                            </select>
-                       </div>    
+                       </div> 
+                          <div>
+                             <label htmlFor="hours" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hours</label>
+                             <input type="time" id="hours" name="hours" value={updatedTask.hours} onChange={handleInputChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+                            </div>   
                     </div>
                     <div className="flex items-center space-x-4">
                         <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blues-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Update Task</button>
@@ -336,6 +342,8 @@ const Tasks = () => {
                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.user.join(' ')}</dd>
                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Deadline</dt>
                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && formatDate (currentPreviewedTask.deadline)}</dd>
+                <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Hours</dt>
+                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.hours}</dd>
                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Status</dt>
                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.status}</dd>
                 
