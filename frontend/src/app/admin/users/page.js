@@ -44,7 +44,7 @@ const Users = () => {
         return () => {
           document.removeEventListener('mousedown', handleClickOutside);
         };
-      }, []);
+      }, [searchQuery]);
       const fetchUsers = async () => {
         try {
             const response = await axios.get(`http://localhost:3001/api/users?search=${searchQuery}`);
@@ -55,16 +55,14 @@ const Users = () => {
     };
     
 
-    const filteredUsers = users.filter(user =>
-        user.username && user.username.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    
+
 
 
 
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
     const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+    
 
     
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -303,7 +301,7 @@ const handleSubmit = async (event) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {filteredUsers.map((user, index) => (
+                                    {currentUsers.map((user, index) => (
                                         <tr key={user._id} className="border-b dark:border-gray-700">
                                             <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.username}</td>
                                             <td className="px-4 py-3 text-center">{user.email}</td>

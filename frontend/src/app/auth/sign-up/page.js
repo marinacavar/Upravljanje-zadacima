@@ -38,6 +38,13 @@ const SignUp = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setErrorMessage('');
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, [errorMessage]);
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
