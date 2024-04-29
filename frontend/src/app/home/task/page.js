@@ -188,7 +188,7 @@ const Tasks = () => {
                                             <td className="px-4 py-3 font-medium text-gray-900 whitespace-normal dark:text-white text-center break-all overflow-auto">{task.tasks}</td>
                                             <td className="px-4 py-3 text-center break-all overflow-auto  ">{task.user.join(' ')}</td>
                                             <td className="px-4 py-3 text-center ">{formatDate(task.deadline)}</td>
-                                            <td className="px-4 py-3 text-center ">{task.hours}</td>
+                                            <td className="px-4 py-3 text-center ">{task.hours || "--:--"}</td>
                                             <td className="px-4 py-3 text-center ">{task.status}</td>
                                             <td className="px-4 py-3 items-center text-center" ref={(el) => (dropdownRefs.current[index] = el)}>
                                                 <button
@@ -343,7 +343,7 @@ const Tasks = () => {
                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Deadline</dt>
                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && formatDate (currentPreviewedTask.deadline)}</dd>
                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Hours</dt>
-                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.hours}</dd>
+                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.hours || "--:--"}</dd>
                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Status</dt>
                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.status}</dd>
                 
