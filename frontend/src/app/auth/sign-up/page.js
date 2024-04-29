@@ -37,6 +37,7 @@ const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -47,7 +48,12 @@ const SignUp = () => {
     };
 
     const submitForm = async (data) => {
+        if (isSubmitting) {
+            return;
+        }
+        
         console.log(data);
+        setIsSubmitting(true);
         try {
             const response = await axios.post('http://localhost:3001/api/users', data);
             console.log(response.data);
@@ -55,7 +61,7 @@ const SignUp = () => {
             alert('Uspješno ste se registrirali!');
         } catch (error) {
             console.error("signup error", error.response.data);
-            if (error.response.status === 400 && error.response.data.message === "User with this email already exists") {
+            if ( error.response.data.message === "User with this email already exists") {
                 setErrorMessage('User with this email already exists!');
             } else if (error.response.status === 400 && error.response.data.message === "User with this username already exists") {
                 setErrorMessage('User with this username already exists!');
@@ -63,6 +69,7 @@ const SignUp = () => {
                 setErrorMessage('Error occurred while registering. Please try again later.');
             }
         }
+        setIsSubmitting(false);
     };
 
     return (
@@ -80,13 +87,24 @@ const SignUp = () => {
                             <form onSubmit={handleSubmit(submitForm)} className="flex flex-col items-center">
                                 <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3">
                                     {AiOutlineUser && <AiOutlineUser className="text-gray-400 mr-2" />}
-                                    <input type="text" name="username" placeholder="Username" className="bg-gray-100 w-full lg:w-64" {...register("username")} />
+                                    <input type="text" name="username" placeholder="Username" className="bg-gray-100 w-full lg:w-64" {...register("username")} 
+                                    onKeyPress={(event) => {
+                                        if (event.key === 'Enter') {
+                                            handleSubmit(submitForm)();
+                                        }
+                                    }}/>
                                 </div>
                                 <p className='error-message'>{dirtyFields.username && errors.username?.message}</p>
 
                                 <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3">
                                     <FaRegEnvelope className="text-gray-400 mr-2" />
-                                    <input type="email" name="email" placeholder="Email" className="bg-gray-100 w-full lg:w-64" {...register("email")} />
+                                    <input type="email" name="email" placeholder="Email" className="bg-gray-100 w-full lg:w-64" {...register("email")} 
+                                    onKeyPress={(event) => {
+                                        if (event.key === 'Enter') {
+                                            handleSubmit(submitForm)();
+                                        }
+                                    }}
+                                    />
                                 </div>
                                 <p className="error-message">{dirtyFields.email && errors.email?.message}</p>
 
@@ -100,6 +118,11 @@ const SignUp = () => {
                                         placeholder="Password"
                                         className="bg-gray-100 w-full lg:w-64 "
                                         {...register("password")}
+                                        onKeyPress={(event) => {
+                                            if (event.key === 'Enter') {
+                                                handleSubmit(submitForm)();
+                                            }
+                                        }}
                                     />
                                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                         {showPassword ? (
@@ -127,6 +150,11 @@ const SignUp = () => {
                                         placeholder="Confirm Password"
                                         className="bg-gray-100 w-full lg:w-64 "
                                         {...register("confirmPassword")}
+                                        onKeyPress={(event) => {
+                                            if (event.key === 'Enter') {
+                                                handleSubmit(submitForm)();
+                                            }
+                                        }}
                                     />
                                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                         {showConfirmPassword ? (
@@ -146,7 +174,7 @@ const SignUp = () => {
 
                                 {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
-                                <button type="submit" className="border-2 border-blue-800 text-blue-800 px-12 py-2 rounded-full inline-block font-semibold hover:bg-blue-800 hover:text-white">Sign Up</button>
+                                <button type= "submit" className={`border-2 rounded-full px-12 py-2 inline-block font-semibold ${isSubmitting ? 'bg-blue-800 text-white' : 'border-blue-800 text-blue-800 hover:bg-blue-800 hover:text-white'}`} >Sign Up </button>
                             </form>
                         </div>
                     </div>

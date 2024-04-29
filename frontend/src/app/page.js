@@ -32,11 +32,14 @@ const Home = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
   const submitForm = async (data) => {
+    setIsSubmitting(true);
     try {
         const response = await axios.post('http://localhost:3001/login', data);
         console.log(response.data); 
@@ -47,8 +50,6 @@ const Home = () => {
         localStorage.setItem('role', role);
         localStorage.setItem('username', username);
         localStorage.setItem('userId', id); 
-
-        
 
         if (role === 'admin') {
             router.push('/admin/task');
@@ -66,6 +67,7 @@ const Home = () => {
           setErrorMessage('');
         }, 5000);
     }
+    setIsSubmitting(false);
 };
 
 
@@ -88,7 +90,12 @@ const Home = () => {
               <form onSubmit={handleSubmit(submitForm)} className="flex flex-col items-center" autoComplete='off'>
                 <div className={`bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3`}>
                   <FaRegEnvelope className="text-gray-400 mr-2"/>
-                  <input type="email" name="email" placeholder="Email" className="bg-gray-100 w-full lg:w-64 " {...register("email")} />
+                  <input type="email" name="email" placeholder="Email" className="bg-gray-100 w-full lg:w-64 " {...register("email")} 
+                  onKeyPress={(event) => {
+                    if (event.key === 'Enter') {
+                        handleSubmit(submitForm)();
+                    }
+                }}/>
                 </div>
                 {dirtyFields.email && <p className='error-message'>{errors.email?.message}</p>} 
 
@@ -102,6 +109,11 @@ const Home = () => {
                     placeholder="Password"
                     className="bg-gray-100 w-full lg:w-64 flex-1 "
                     {...register("password")}
+                    onKeyPress={(event) => {
+                      if (event.key === 'Enter') {
+                          handleSubmit(submitForm)();
+                      }
+                  }}
                   />
 
 
@@ -128,7 +140,7 @@ const Home = () => {
                   <a href="#" className="text-xs">Forgot Password?</a>
                 </div>
                 {errorMessage && <p className='error-message'>{errorMessage}</p>} 
-                <button className="border-2 border-blue-800 text-blue-800 rounded-full px-12 py-2 inline-block font-semibold hover:bg-blue-800 hover:text-white" >Sign In </button>
+                <button className={`border-2 rounded-full px-12 py-2 inline-block font-semibold ${isSubmitting ? 'bg-blue-800 text-white' : 'border-blue-800 text-blue-800 hover:bg-blue-800 hover:text-white'}`} >Sign In </button>
               </form>
             </div>
           </div>
