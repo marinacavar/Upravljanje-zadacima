@@ -11,6 +11,7 @@ exports.create = (req, res) => {
         tasks: req.body.tasks,
         user: req.body.users, 
         deadline: req.body.deadline,
+        hours: req.body.hours,
         status: req.body.status
     });
 

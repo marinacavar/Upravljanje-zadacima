@@ -70,6 +70,14 @@ function Profile() {
                 username: editableUserInfo.username,
                 email: editableUserInfo.email,
             };
+
+            if (requestData.username.trim() === '') {
+                setErrorMessage("Username cannot be empty!");
+                setTimeout(() => {
+                    setErrorMessage('');
+                }, 3000);
+                return;
+            }
     
             if (currentPassword && newPassword) {
                 if (newPassword !== confirmPassword) {
