@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import axios from 'axios';
+import Link from 'next/link';
 
 const schema = yup.object().shape({
   email: yup
@@ -137,7 +138,9 @@ const Home = () => {
                     <input type="checkbox" name="remember" className="mr-1"/>
                     Remember me
                   </label>
-                  <a href="#" className="text-xs">Forgot Password?</a>
+                  <Link href="/auth/forgotPassword">
+                  <p className="text-xs text-blue-500">Forgot Password?</p>
+                  </Link>
                 </div>
                 {errorMessage && <p className='error-message'>{errorMessage}</p>} 
                 <button className={`border-2 rounded-full px-12 py-2 inline-block font-semibold ${isSubmitting ? 'bg-blue-800 text-white' : 'border-blue-800 text-blue-800 hover:bg-blue-800 hover:text-white'}`} >Sign In </button>
