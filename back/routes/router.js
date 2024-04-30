@@ -12,6 +12,8 @@ route.get('/api/users', controller.find);
 route.get('/api/users/:id', controller.findOne);
 route.put('/api/users/:id', controller.update);
 route.delete('/api/users/:id', controller.delete);
+route.post('/forgetPassword', controller.forgetPassword);
+route.put('/resetPassword',authenticateToken, controller.resetPassword);
 
 // Task routes
 route.post('/task', controllers.create);

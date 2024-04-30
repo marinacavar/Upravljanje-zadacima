@@ -1,6 +1,8 @@
 var User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+
 
 exports.create = (req, res) => {
     if (!req.body) {
@@ -234,3 +236,63 @@ exports.delete = (req, res)=>{
             });
         });
 }
+exports.forgetPassword = (req, res) => {
+    const { email } = req.body;
+    User.findOne({ email })
+        .then(user => {
+            if (!user) {
+                return res.status(404).send({ message: "User not found!" });
+            }
+            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+                expiresIn: '59min'
+            });
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL,
+                    pass: process.env.EMAIL_PASSWORD
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
+            });
+            const mailOptions = {
+                from: process.env.EMAIL,
+                to: email,
+                subject: 'Reset Password',
+                text: `Click this link to reset your password: ${process.env.CLIENT_URL}/reset/${token}`
+            };
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) {
+                    console.error("Error sending email:", err); 
+                    return res.status(500).send({ message: "Error sending email" });
+                }
+                res.status(200).send({ message: "Email sent successfully" });
+            });
+        })
+        .catch(err => {
+            console.error("Error finding user:", err); 
+            res.status(500).send({ message: "Error finding user" });
+        });
+};
+
+exports.resetPassword = async (req, res) => {
+    const id = req.userId;
+    const { newPassword } = req.body;
+
+    try {
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).send({ message: "User not found!" });
+        }
+        if (newPassword.length < 8) {
+            return res.status(400).send({ message: "Password must be at least 8 characters long!" });
+        }
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const updatedUser = await User.findByIdAndUpdate(id, { password: hashedPassword }, { useFindAndModify: false, new: true });
+        res.status(200).send({ message: "Password updated successfully!", user: updatedUser });
+    } catch (error) {
+        console.error("Error resetting password", error);
+        res.status(500).send({ message: "Error resetting password" });
+    }
+};
