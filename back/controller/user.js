@@ -97,10 +97,10 @@ exports.login = (req, res) => {
                 if (err || !result) {
                     return res.status(401).send({ message: "Password is incorrect!" });
                 }
-
-                const token = jwt.sign({ id: user.id, username: user.username,  role: user.role }, process.env.JWT_SECRET, {
+                const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, process.env.JWT_SECRET, {
                     expiresIn: '1h'
                 });
+                
 
                 
                 res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).json({ token, id: user.id, username: user.username,  role: user.role });
@@ -112,10 +112,9 @@ exports.login = (req, res) => {
 };
 
 
-
-
 exports.authenticateToken = (req, res, next) => {
-    const token = req.cookies.jwt;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
         return res.status(401).send({ message: "Unauthorized" });
@@ -125,10 +124,12 @@ exports.authenticateToken = (req, res, next) => {
         if (err) {
             return res.status(403).send({ message: "Invalid token" });
         }
-        req.userId = decodedToken.userId;
+        req.userId = decodedToken.id;
         next();
     });
 };
+
+
 exports.find = (req, res) => {
     const searchQuery = req.query.search; 
 
