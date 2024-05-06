@@ -9,16 +9,15 @@ import Link from 'next/link';
 export default function Sidebar() {
   const router = useRouter();
   const [userData, setUserData] = useState(null);
-
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const userId = localStorage.getItem('userId');
         if (!userId) return;
-        
-        const res = await fetch(`http://localhost:3001/api/users/${userId}`);
-        const data = await res.json();
-        setUserData(data);
+
+        const response = await axios.get(`http://localhost:3001/api/users/${userId}`);
+        const { username } = response.data;
+        setUserData({ username });
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -28,12 +27,14 @@ export default function Sidebar() {
   }, []);
 
   const handleLogout = () => {
+    setUserData(null);
+
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    localStorage.removeItem('username');
     localStorage.removeItem('userId');
     router.push('/');
   };
+
 
   return (
     <div>
