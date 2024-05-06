@@ -98,7 +98,7 @@ const Home = () => {
                     }
                 }}/>
                 </div>
-                {dirtyFields.email && <p className='error-message'>{errors.email?.message}</p>} 
+                {dirtyFields.email && <p className="text-gray-600 text-xs italic">{errors.email?.message}</p>} 
 
                 <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3 relative" >
                   <div className="text-gray-400 mr-2">
@@ -131,7 +131,7 @@ const Home = () => {
                     )}
                   </div>
                 </div>
-                {dirtyFields.password && <p className='error-message'>{errors.password?.message}</p>} 
+                {dirtyFields.password && <p className="text-gray-500 text-xs italic">{errors.password?.message}</p>} 
 
                 <div className="flex justify-between w-full lg:w-64 mb-5 ">
                   <label className="flex items-center text-xs">

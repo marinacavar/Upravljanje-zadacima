@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import axios from 'axios';
+import { toast, Toaster } from 'react-hot-toast';
 
 const schema = yup.object().shape({
     username: yup.string()
@@ -64,8 +65,12 @@ const SignUp = () => {
         try {
             const response = await axios.post('http://localhost:3001/api/users', data);
             console.log(response.data);
-            router.push('/');
-            alert('Uspješno ste se registrirali!');
+            toast.success ('Uspješno ste se registrirali!', {
+                autoClose: 3000,
+            });
+            setTimeout(() => {
+                router.push('/');
+            }, 1000);
         } catch (error) {
             console.error("signup error", error.response.data);
             if ( error.response.data.message === "User with this email already exists") {
@@ -81,6 +86,7 @@ const SignUp = () => {
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen py-2 bg-gray-100">
+            <Toaster />
             <main className="w-full flex flex-col items-center justify-center flex-1 px-5 lg:px-20">
                 <div className="bg-white rounded-2xl shadow-2xl w-full lg:w-2/3 max-w-lg">
                     <div className="w-full lg:w-3/5 p-5 mx-auto">
@@ -113,7 +119,7 @@ const SignUp = () => {
                                     }}
                                     />
                                 </div>
-                                <p className="error-message">{dirtyFields.email && errors.email?.message}</p>
+                                <p className="text-gray-500 text-xs italic">{dirtyFields.email && errors.email?.message}</p>
 
                                 <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3 relative">
                                     <div className="text-gray-400 mr-2">
@@ -145,7 +151,7 @@ const SignUp = () => {
                                         )}
                                     </div>
                                 </div>
-                                <p className='error-message'>{dirtyFields.password && errors.password?.message}</p>
+                                <p className="text-gray-500 text-xs italic">{dirtyFields.password && errors.password?.message}</p>
 
                                 <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3 relative">
                                     <div className="text-gray-400 mr-2">
@@ -177,7 +183,7 @@ const SignUp = () => {
                                         )}
                                     </div>
                                 </div>
-                                <p className='error-message'>{dirtyFields.confirmPassword && errors.confirmPassword?.message}</p>
+                                <p className="text-gray-500 text-xs italic">{dirtyFields.confirmPassword && errors.confirmPassword?.message}</p>
 
                                 {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
