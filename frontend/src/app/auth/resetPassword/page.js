@@ -1,6 +1,7 @@
 "use client"
 import React from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import axios from 'axios';
@@ -17,23 +18,27 @@ const schema = yup.object().shape({
 });
 
 const ResetPassword = () => {
+  const { token } = useParams(); // Get the token from URL params
+  console.log("Token:", token);
+
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: yupResolver(schema),
   });
-
   const submitForm = async (data) => {
     try {
-      await axios.put( 'http://localhost:3001/resetPassword', data);
-      toast.success('Your password has been reset successfully.',{
-        duration: 10000,
-      });
-      reset();
+        const response = await axios.put(`http://localhost:3001/resetPassword?token=${token}`, { newPassword: data.password });
+
+        toast.success(response.data.message,{
+            duration: 10000,
+        });
+        reset();
     } catch (error) {
-      toast.error('An error occurred.',{
-        duration: 10000,
-      });
+        toast.error('An error occurred.',{
+            duration: 10000,
+        });
     }
-  };
+};
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">

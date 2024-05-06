@@ -261,7 +261,7 @@ exports.forgetPassword = (req, res) => {
                 from: process.env.EMAIL,
                 to: email,
                 subject: 'Reset Password',
-                text: `Click this link to reset your password: ${process.env.CLIENT_URL}/${token}`
+                text: `Click this link to reset your password: ${process.env.CLIENT_URL}?token=${token}`
             };
             transporter.sendMail(mailOptions, (err, info) => {
                 if (err) {
@@ -276,7 +276,6 @@ exports.forgetPassword = (req, res) => {
             res.status(500).send({ message: "Error finding user" });
         });
 };
-
 exports.resetPassword = async (req, res) => {
     const id = req.userId;
     const { newPassword } = req.body;

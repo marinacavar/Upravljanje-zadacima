@@ -15,6 +15,7 @@ route.delete('/api/users/:id', controller.delete);
 route.post('/forgetPassword', controller.forgetPassword);
 route.put('/resetPassword',authenticateToken, controller.resetPassword);
 
+
 // Task routes
 route.post('/task', controllers.create);
 route.get('/task', controllers.find);
