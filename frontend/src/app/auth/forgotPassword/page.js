@@ -16,6 +16,7 @@ const schema = yup.object().shape({
 const ForgotPassword = () => {
   const { register, handleSubmit, formState: { errors }, reset} = useForm({
     resolver: yupResolver(schema),
+    mode: 'onBlur',
   });
 
   const submitForm = async (data) => {
@@ -60,7 +61,7 @@ const ForgotPassword = () => {
                 placeholder="Email"
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white"
               />
-              {errors.email && <p>{errors.email.message}</p>}
+              {errors.email && <p className="text-red-500 text-xs italic">{errors.email.message}</p>}
             </div>
             <div className="flex items-center justify-center mt-10">
               <button className="border-2 rounded-full px-12 py-2 inline-block font-semibold border-blue-800 text-blue-800 hover:bg-blue-800 hover:text-white" type="submit">

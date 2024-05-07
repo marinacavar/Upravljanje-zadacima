@@ -28,7 +28,7 @@ const SignUp = () => {
     const router = useRouter();
     const { register, handleSubmit, formState: { errors, dirtyFields, isValid } } = useForm({
         resolver: yupResolver(schema),
-        mode: 'onChange'
+        mode: 'onBlur'
     });
 
     useEffect(() => {
@@ -98,70 +98,90 @@ const SignUp = () => {
                             <div className="border-2 w-10 border-blue-800 mx-auto mb-2"></div>
 
                             <form onSubmit={handleSubmit(submitForm)} className="flex flex-col items-center">
-                                <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3">
-                                    {AiOutlineUser && <AiOutlineUser className="text-gray-400 mr-2" />}
-                                    <input type="text" name="username" placeholder="Username" className="bg-gray-100 w-full lg:w-64" {...register("username")} 
+
+                                <div className={`w-full lg:w-72 p-2 flex flex-col items-start relative mb-2`}>
+                                    <div className="flex items-center w-full relative">
+                                    <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                        <AiOutlineUser />
+                                        </div>
+                                        <input
+                                        type="text" 
+                                        name="username" 
+                                        placeholder="Username" 
+                                        className="shadow appearance-none border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white pl-7" {...register("username")} 
                                     onKeyPress={(event) => {
                                         if (event.key === 'Enter') {
                                             handleSubmit(submitForm)();
                                         }
                                     }}/>
+
+                                </div>
                                 </div>
                                 <p className='error-message'>{dirtyFields.username && errors.username?.message}</p>
 
-                                <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3">
-                                    <FaRegEnvelope className="text-gray-400 mr-2" />
-                                    <input type="email" name="email" placeholder="Email" className="bg-gray-100 w-full lg:w-64" {...register("email")} 
-                                    onKeyPress={(event) => {
-                                        if (event.key === 'Enter') {
-                                            handleSubmit(submitForm)();
-                                        }
-                                    }}
-                                    />
-                                </div>
-                                <p className="text-gray-500 text-xs italic">{dirtyFields.email && errors.email?.message}</p>
-
-                                <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3 relative">
-                                    <div className="text-gray-400 mr-2">
-                                        <MdLockOutline />
-                                    </div>
-                                    <input
-                                        type={showPassword ? 'text' : 'password'}
-                                        name="password"
-                                        placeholder="Password"
-                                        className="bg-gray-100 w-full lg:w-64 "
-                                        {...register("password")}
+                                <div className={`w-full lg:w-72 p-2 flex flex-col items-start relative mb-2`}>
+                                    <div className="flex items-center w-full relative">
+                                    <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                        <FaRegEnvelope />
+                                        </div>
+                                        <input 
+                                        type="email" 
+                                        name="email" 
+                                        placeholder="Email" 
+                                        className="shadow appearance-none border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white pl-7" {...register("email")} 
                                         onKeyPress={(event) => {
                                             if (event.key === 'Enter') {
                                                 handleSubmit(submitForm)();
                                             }
                                         }}
-                                    />
-                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        />
+                                    </div>
+                                    {dirtyFields.email && <p className="text-blue-400 text-xs italic">{errors.email?.message}</p>}
+                                    </div>
+
+                                <div className={`w-full lg:w-72 p-2 flex flex-col items-start relative mb-3`}>
+                                    <div className="flex items-center w-full relative">
+                                        <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                        <MdLockOutline />
+                                        </div>
+                                        <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        name="password"
+                                        placeholder="Password"
+                                        className="shadow appearance-none border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white pl-7"
+                                        {...register("password")}
+                                        onKeyPress={(event) => {
+                                            if (event.key === 'Enter') {
+                                            handleSubmit(submitForm)();
+                                            }
+                                        }}
+                                        />
+                                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                         {showPassword ? (
                                             <MdVisibility
-                                                className="text-gray-400 cursor-pointer"
-                                                onClick={togglePasswordVisibility}
+                                            className="text-gray-400 cursor-pointer"
+                                            onClick={togglePasswordVisibility}
                                             />
                                         ) : (
                                             <MdVisibilityOff
-                                                className="text-gray-400 cursor-pointer"
-                                                onClick={togglePasswordVisibility}
-                                            />
+                                            className="text-gray-400 cursor-pointer"
+                                            onClick={togglePasswordVisibility}/>
                                         )}
+                                        </div>
                                     </div>
+                                    {dirtyFields.password && <p className="text-blue-400 text-xs italic">{errors.password?.message}</p>}
                                 </div>
-                                <p className="text-gray-500 text-xs italic">{dirtyFields.password && errors.password?.message}</p>
 
-                                <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3 relative">
-                                    <div className="text-gray-400 mr-2">
+                                <div className={`w-full lg:w-72 p-2 flex flex-col items-start relative mb-3`}>
+                                    <div className="flex items-center w-full relative">
+                                        <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
                                         <MdLockOutline />
-                                    </div>
-                                    <input
+                                        </div>
+                                        <input
                                         type={showConfirmPassword ? 'text' : 'password'}
                                         name="confirmPassword"
                                         placeholder="Confirm Password"
-                                        className="bg-gray-100 w-full lg:w-64 "
+                                        className="shadow appearance-none border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white pl-7 "
                                         {...register("confirmPassword")}
                                         onKeyPress={(event) => {
                                             if (event.key === 'Enter') {
@@ -183,8 +203,8 @@ const SignUp = () => {
                                         )}
                                     </div>
                                 </div>
-                                <p className="text-gray-500 text-xs italic">{dirtyFields.confirmPassword && errors.confirmPassword?.message}</p>
-
+                                <p className="text-blue-400 text-xs italic">{dirtyFields.confirmPassword && errors.confirmPassword?.message}</p>
+                                </div>
                                 {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
                                 <button type= "submit" className={`border-2 rounded-full px-12 py-2 inline-block font-semibold ${isSubmitting ? 'bg-blue-800 text-white' : 'border-blue-800 text-blue-800 hover:bg-blue-800 hover:text-white'}`} >Sign Up </button>
