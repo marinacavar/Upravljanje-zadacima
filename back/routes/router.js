@@ -29,7 +29,5 @@ route.delete('/myTask/:id', controllerss.delete);
 
 
 
-//route.get('/admin', authenticateToken, (req, res) => {
-//});
 
 module.exports = route;
