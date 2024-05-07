@@ -245,7 +245,7 @@ exports.forgetPassword = (req, res) => {
                 return res.status(404).send({ message: "User not found!" });
             }
             const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-                expiresIn: '59min'
+                expiresIn: '15min'
             });
             const transporter = nodemailer.createTransport({
                 service: 'gmail',

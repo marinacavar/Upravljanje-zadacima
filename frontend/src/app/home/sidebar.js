@@ -14,10 +14,10 @@ export default function Sidebar() {
       try {
         const userId = localStorage.getItem('userId');
         if (!userId) return;
-
-        const response = await axios.get(`http://localhost:3001/api/users/${userId}`);
-        const { username } = response.data;
-        setUserData({ username });
+        
+        const res = await fetch(`http://localhost:3001/api/users/${userId}`);
+        const data = await res.json();
+        setUserData(data);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
