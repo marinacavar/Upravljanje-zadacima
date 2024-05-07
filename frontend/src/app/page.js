@@ -89,57 +89,66 @@ const Home = () => {
               <div className="border-2 w-10 border-blue-800 inline-block mb-2"></div>
 
               <form onSubmit={handleSubmit(submitForm)} className="flex flex-col items-center" autoComplete='off'>
-                <div className={`bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3`}>
-                  <FaRegEnvelope className="text-gray-400 mr-2"/>
-                  <input type="email" name="email" placeholder="Email" className="bg-gray-100 w-full lg:w-64 " {...register("email")} 
-                  onKeyPress={(event) => {
-                    if (event.key === 'Enter') {
-                        handleSubmit(submitForm)();
-                    }
-                }}/>
-                </div>
-                {dirtyFields.email && <p className="text-gray-600 text-xs italic">{errors.email?.message}</p>} 
-
-                <div className="bg-gray-100 w-full lg:w-64 p-2 flex items-center mb-3 relative" >
-                  <div className="text-gray-400 mr-2">
-                  <MdLockOutline />
+                <div className={`w-full lg:w-72 p-2 flex flex-col items-start relative mb-2`}>
+                  <div className="flex items-center w-full relative">
+                  <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
+                      <FaRegEnvelope />
+                    </div>
+                    <input 
+                      type="email" 
+                      name="email" 
+                      placeholder="Email" 
+                      className="shadow appearance-none border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white pl-7" {...register("email")} 
+                      onKeyPress={(event) => {
+                        if (event.key === 'Enter') {
+                            handleSubmit(submitForm)();
+                        }
+                      }}
+                    />
                   </div>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    placeholder="Password"
-                    className="bg-gray-100 w-full lg:w-64 flex-1 "
-                    {...register("password")}
-                    onKeyPress={(event) => {
-                      if (event.key === 'Enter') {
+                  {dirtyFields.email && <p className="text-blue-400 text-xs italic">{errors.email?.message}</p>}
+                </div>
+
+                <div className={`w-full lg:w-72 p-2 flex flex-col items-start relative mb-3`}>
+                  <div className="flex items-center w-full relative">
+                    <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
+                      <MdLockOutline />
+                    </div>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      name="password"
+                      placeholder="Password"
+                      className="shadow appearance-none border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white pl-7"
+                      {...register("password")}
+                      onKeyPress={(event) => {
+                        if (event.key === 'Enter') {
                           handleSubmit(submitForm)();
-                      }
-                  }}
-                  />
-
-
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    {showPassword ? (
-                      <MdVisibility
-                        className="text-gray-400 cursor-pointer"
-                        onClick={togglePasswordVisibility}
-                      />
-                    ) : (
-                      <MdVisibilityOff
-                        className="text-gray-400 cursor-pointer"
-                        onClick={togglePasswordVisibility}/>
-                    )}
+                        }
+                      }}
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                      {showPassword ? (
+                        <MdVisibility
+                          className="text-gray-400 cursor-pointer"
+                          onClick={togglePasswordVisibility}
+                        />
+                      ) : (
+                        <MdVisibilityOff
+                          className="text-gray-400 cursor-pointer"
+                          onClick={togglePasswordVisibility}/>
+                      )}
+                    </div>
                   </div>
+                  {dirtyFields.password && <p className="text-blue-400 text-xs italic">{errors.password?.message}</p>}
                 </div>
-                {dirtyFields.password && <p className="text-gray-500 text-xs italic">{errors.password?.message}</p>} 
-
+                
                 <div className="flex justify-between w-full lg:w-64 mb-5 ">
                   <label className="flex items-center text-xs">
-                    <input type="checkbox" name="remember" className="mr-1"/>
-                    Remember me
+                      <input type="checkbox" name="remember" className="mr-1"/>
+                      Remember me
                   </label>
                   <Link href="/auth/forgotPassword">
-                  <p className="text-xs text-blue-500">Forgot Password?</p>
+                    <p className="text-xs text-blue-500">Forgot Password?</p>
                   </Link>
                 </div>
                 {errorMessage && <p className='error-message'>{errorMessage}</p>} 

@@ -26,6 +26,7 @@ function ResetPassword() {
     const [token, setToken] = useState('');
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: yupResolver(schema),
+        mode: 'onBlur',
 });
 
   // Extract the token from the URL
@@ -34,9 +35,6 @@ function ResetPassword() {
     setToken(urlParams.get('token'));
   }, []);
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
   const handleResetPassword = async (data) => {
     try {
       const response = await axios.put('http://localhost:3001/resetPassword', { newPassword: data.password }, {
@@ -90,7 +88,7 @@ function ResetPassword() {
                 )}
                 </div>
             </div>
-            {errors.password && <p className="text-red-500 text-xs italic">{errors.password.message}</p>}
+            {errors.password && <p className="text-blue-400 text-xs italic">{errors.password.message}</p>}
             </div>
             <div className="relative mb-4">
                 <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="confirmPassword">
@@ -117,7 +115,7 @@ function ResetPassword() {
                     )}
                 </div>
             </div>
-            {errors.confirmPassword && <p className="text-red-500 text-xs italic">{errors.confirmPassword.message}</p>}
+            {errors.confirmPassword && <p className="text-blue-400 text-xs italic">{errors.confirmPassword.message}</p>}
             </div>
             <div className="flex items-center justify-center mt-10">
               <button className="border-2 rounded-full px-12 py-2 inline-block font-semibold border-blue-800 text-blue-800 hover:bg-blue-800 hover:text-white" type="submit">
