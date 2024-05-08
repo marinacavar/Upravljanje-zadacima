@@ -6,5 +6,6 @@ It helps you manage your to-do list, prioritize tasks, and collaborate with othe
 Team Members:
 
 Marina Ćavar - Backend Developer
+
 Mila Lovrić - Frontend Developer
 
