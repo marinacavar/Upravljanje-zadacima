@@ -6,6 +6,7 @@ It helps you manage your to-do list, prioritize tasks, and collaborate with othe
 ## Team Members:
 
 -[Marina Ćavar](https://github.com/marinacavar) - Backend Developer
+
 -[Mila Lovrić](https://github.com/milalovric) - Frontend Developer
 
 ## Table of Contents
@@ -82,5 +83,5 @@ In addition to user functionalities, administrators have access to:
 
 ## Screenshots
 
-![Screenshot 1](screenshot1.png)
+![screenshot1](https://github.com/marinacavar/Upravljanje-zadacima/assets/97121756/48b98d4e-350f-4896-97b2-ab741291bc6d)
 
