@@ -85,15 +85,19 @@ In addition to user functionalities, administrators have access to:
 
 ![screenshot1](https://github.com/marinacavar/Upravljanje-zadacima/assets/97121756/48b98d4e-350f-4896-97b2-ab741291bc6d)
 <br/>
+---
 <br/>
 ![screenshot3](https://github.com/marinacavar/Upravljanje-zadacima/assets/97121756/f9c8ebeb-72ac-496e-a693-ed1c92a09200)
 <br/>
+---
 <br/>
 ![screenshot4](https://github.com/marinacavar/Upravljanje-zadacima/assets/97121756/bb6fb62f-e3f0-43cd-ba05-2c637be78e35)
 <br/>
+---
 <br/>
 ![screenshot5](https://github.com/marinacavar/Upravljanje-zadacima/assets/97121756/5a699784-673e-4e12-8481-dce6a3b4719c)
 <br/>
+---
 <br/>
 ![screenshot6](https://github.com/marinacavar/Upravljanje-zadacima/assets/97121756/ac5141f5-4937-4c2e-8888-b7753a35cff4)
 
