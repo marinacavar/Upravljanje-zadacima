@@ -8,6 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import axios from 'axios';
 import Link from 'next/link';
+import { toast, Toaster } from 'react-hot-toast';
 
 const schema = yup.object().shape({
   email: yup
@@ -40,6 +41,7 @@ const Home = () => {
     setShowPassword(!showPassword);
   };
   const submitForm = async (data) => {
+    
     setIsSubmitting(true);
     try {
         const response = await axios.post('http://localhost:3001/login', data);
@@ -57,18 +59,19 @@ const Home = () => {
         } else {
             router.push('/home/task');
         }
-    } catch (error) {
-        console.error("login error", error); 
-        if (error.response && error.response.data) {
-            setErrorMessage(error.response.data.message);
-        } else {
-            setErrorMessage("An error occurred while logging in");
-        }
-        setTimeout(() => {
-          setErrorMessage('');
-        }, 5000);
-    }
-    setIsSubmitting(false);
+    // Display a success toast message
+    toast.success('Successfully logged in!', {
+    });
+  } catch (error) {
+  console.error("login error", error); 
+  
+
+  // Display an error toast message
+  toast.error('User with this email doesnt exist.', {
+    
+  });
+}
+  setIsSubmitting(false);
 };
 
 
@@ -78,6 +81,7 @@ const Home = () => {
 
   return (
     <div className="flex flex-col justify-center min-h-screen py-2 bg-gray-100">
+      <Toaster />
       <main className="flex flex-col items-center justify-center w-full flex-1 px-5 lg:px-20 min-h-screen bg-gray-100 text-center">
         <div className="bg-white rounded-2xl shadow-2xl flex flex-col lg:flex-row w-full lg:w-2/3 max-w-4xl">
           <div className="w-full lg:w-3/5 p-5">
@@ -98,14 +102,10 @@ const Home = () => {
                       type="email" 
                       name="email" 
                       placeholder="Email" 
-                      className="shadow appearance-none border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white pl-7" {...register("email")} 
-                      onKeyPress={(event) => {
-                        if (event.key === 'Enter') {
-                            handleSubmit(submitForm)();
-                        }
-                      }}
+                      className="shadow appearance-none border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white pl-7" 
+                      {...register("email")} 
                     />
-                  </div>
+                    </div>
                   {dirtyFields.email && <p className="text-blue-400 text-xs italic">{errors.email?.message}</p>}
                 </div>
 
@@ -120,11 +120,7 @@ const Home = () => {
                       placeholder="Password"
                       className="shadow appearance-none border-2 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white pl-7"
                       {...register("password")}
-                      onKeyPress={(event) => {
-                        if (event.key === 'Enter') {
-                          handleSubmit(submitForm)();
-                        }
-                      }}
+                      
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                       {showPassword ? (
