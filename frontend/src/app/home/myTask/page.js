@@ -7,6 +7,8 @@ import { FiEdit } from "react-icons/fi";
 import { FaEye } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { IoMdAdd, IoMdClose } from "react-icons/io";
+import { CiCalendar, CiClock1 } from "react-icons/ci";
+import { FaTasks } from "react-icons/fa";
 
 import axios from 'axios';
 
@@ -18,8 +20,7 @@ const myTasks = () => {
     const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(10);
-    const [openDropdowns, setOpenDropdowns] = useState(Array(tasks.length).fill(false));
-    const dropdownRefs = useRef([]);
+    const taskRef = useRef(null);
     const [addSuccessMessage, setAddSuccessMessage] = useState('');
     const [users, setUsers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -28,23 +29,31 @@ const myTasks = () => {
     const [updatedTask, setUpdatedTask] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [updateSuccessMessage, setUpdateSuccessMessage] = useState('');
-    //read
-    const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
-    const [currentPreviewedTask, setCurrentPreviewedTask] = useState(null);
-    const [cameFromReadModal, setCameFromReadModal] = useState(false);
+
     //delete
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [taskToDelete, setTaskToDelete] = useState(null);
     
-    
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (taskRef.current && !taskRef.current.contains(event.target)) {
+                const taskElements = document.getElementsByClassName('task-text');
+                for (let i = 0; i < taskElements.length; i++) {
+                    taskElements[i].classList.add('line-clamp-2');
+                }
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     useEffect(() => {
         fetchTasks(); 
         fetchUsers();
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-          document.removeEventListener('mousedown', handleClickOutside);
-        };
+        
     }, [searchQuery]);
 
     const fetchTasks = async () => {
@@ -75,27 +84,6 @@ const myTasks = () => {
 
     
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-    const toggleDropdown = (index) => {
-        setOpenDropdowns((prevState) => {
-            const updatedDropdowns = [...prevState];
-            updatedDropdowns[index] = !updatedDropdowns[index];
-            return updatedDropdowns;
-        });
-    };
-
-    const handleClickOutside = (event) => {
-        dropdownRefs.current.forEach((ref, index) => {
-            if (ref && !ref.contains(event.target)) {
-                setOpenDropdowns((prevState) => {
-                    const updatedDropdowns = [...prevState];
-                    updatedDropdowns[index] = false;
-                    return updatedDropdowns;
-                });
-            }
-        });
-    };
-    
 
     
 //  task add
@@ -137,19 +125,13 @@ const handleSubmit = async (event) => {
         setIsAddModalOpen(!isAddModalOpen);
     };
 
-
-
     //edit
     
-    const handleEditClick = (task, cameFromRead = false) => {
+    const handleEditClick = (task= false) => {
         console.log("Edit button clicked, task:", task); 
         setCurrentTask(task); 
         setUpdatedTask(task); 
-        setIsModalOpen(true); 
-        setIsPreviewModalOpen(false);
-        setCameFromReadModal(cameFromRead);
-        
-        
+        setIsModalOpen(true);
     };
     
     const handleInputChange = (event) => {
@@ -180,10 +162,7 @@ const handleSubmit = async (event) => {
                 setUpdateSuccessMessage('');
             }, 5000);
             
-            if (cameFromReadModal) {
-                setIsPreviewModalOpen(true);
-                setCameFromReadModal(false);
-            }
+            
         } catch (error) {
             console.error('Failed to update task:', error);
         }
@@ -201,19 +180,13 @@ const handleSubmit = async (event) => {
         return new Date(dateString).toISOString().split('T')[0];
     }
     
-    //read
-
-    const handlePreviewClick = (task) => {
-        setCurrentPreviewedTask(task);
-        setIsPreviewModalOpen(true);
-        setIsModalOpen (false);
-    };
 
 
     // delete 
     const handleDeleteClick = (id) => {
         setIsDeleteModalOpen(true);
         setTaskToDelete(id);
+        
     };
 
     const handleConfirmDelete = () => {
@@ -237,7 +210,7 @@ const handleSubmit = async (event) => {
     </div>
         <section className="bg-gray-100 dark:bg-gray-900 antialiased flex-grow mt-3">
             <div className="mx-auto px-4 lg:px-12">
-                <div className="flex-1 ml-0 md:ml-16 lg:ml-48 lg:pl-2">
+                <div className="flex-1 ml-0 md:ml-16 lg:ml-48 lg:pl-2 pt-20 lg:pt-0">
                     <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                         <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                             {/* Search form */}
@@ -246,14 +219,14 @@ const handleSubmit = async (event) => {
                                     <label htmlFor="simple-search" className="sr-only">Search</label>
                                     <div className="relative w-full">
                                         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                            <svg aria-hidden="true" className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <svg aria-hidden="true" className="w-5 h-5 text-blue-800 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                 <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
                                             </svg>
                                         </div>
                                         <input
                                                 type="text"
                                                 id="simple-search"
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
+                                                className="bg-gray-50 border border-blue-500 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dark-blue-500 block w-full pl-10 p-2" 
                                                 placeholder="Search"
                                                 value={searchQuery}
                                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -274,81 +247,58 @@ const handleSubmit = async (event) => {
                                 </button>
                             </div>
                         </div>
-                        {/* Table */}
-                        <div className="overflow-x-auto max-w-none">
-                            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-fixed">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
-                                        <th scope="col" className="px-4 py-4 w-1/5 text-center">Task</th>
-                                        <th scope="col" className="px-4 py-3 w-1/5 text-center">Deadline</th>
-                                        <th scope="col" className="px-4 py-3 w-1/5 text-center " >Hours</th>
-                                        <th scope="col" className="px-4 py-3 w-1/5 text-center">Status</th>
-                                        <th scope="col" className="px-4 py-3 w-1/5 text-center">
-                                            <span className="sr-only text-right">Actions</span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {currentTasks.map((task, index) => (
-                                    <tr key={task._id} className="border-b dark:border-gray-700">
-                                        <td className="px-4 py-3 font-medium text-gray-900 whitespace-normal dark:text-white text-center break-all overflow-auto">{task.tasks}</td>
-                                        
-                                        <td className="px-4 py-3 text-center ">{formatDate(task.deadline)}</td>
-                                        <td className="px-4 py-3 text-center ">{task.hours || "--:--"}</td>
-                                        <td className="px-4 py-3 text-center ">{task.status}</td>
-                                        <td className="px-4 py-3 items-center text-center" ref={(el) => (dropdownRefs.current[index] = el)}>
-                                            <button
-                                                className="inline-flex items-center text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 dark:hover-bg-gray-800 "
-                                                type="button"
-                                                onClick={() => toggleDropdown(index)}
-                                            >
-                                                <svg
-                                                    className="w-5 h-5"
-                                                    aria-hidden="true"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 20 20"
-                                                    xmlns="http://www.w3.org/2000/svg"
+                        {/* Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                            {currentTasks.map((task) => (
+                                <div key={task._id} className="w-full h-64 flex flex-col justify-between dark:bg-gray-800 bg-white dark:border-gray-700 rounded-lg border-2 border-blue-400 mb-6 py-5 px-6 overflow-hidden shadow-lg relative">
+                                    <div>
+                                        <div className="grid grid-cols-1 gap-1 items-start">
+                                            <div className="col-span-1">
+                                                <FaTasks className="text-gray-500 mr-2 align-middle inline-block" />
+                                            </div>
+                                            <div className="col-span-1">
+                                                <h3 
+                                                    className={`task-text text-gray-900 mb-3 break-words ${task.tasks.length > 50 ? 'line-clamp-2 cursor-pointer' : ''}`}
+                                                    onClick={(e) => {
+                                                        if (task.tasks.length > 50) {
+                                                            e.target.classList.toggle('line-clamp-2');
+                                                        }
+                                                    }}
+                                                    style={{ fontFamily: 'sans-serif', fontWeight: 600, wordWrap: 'break-word' }}
                                                 >
-                                                    <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                </svg>
-                                            </button>
-                                            {/* Dropdown content */}
-                                            {openDropdowns[index] && (
-                                                <div id="dropdown" className="absolute z-10 bg-white rounded shadow dark:bg-gray-700">
-                                                    <ul className="py-1 text-x" aria-labelledby="dropdown-button">
-                                                        <li>
-                                                            <button
-                                                                className="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                                onClick={() => handleEditClick(task)}
-                                                            >
-                                                                <FiEdit className="w-4 h-4 mr-2" />
-                                                                Edit
-                                                            </button>
-                                                        </li>
-                                                        <li>
-                                                            <button className="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                                onClick={() => handlePreviewClick(task)}
-                                                            >
-                                                                <FaEye className="w-4 h-4 mr-2" />
-                                                                Preview
-                                                            </button>
-                                                        </li>
-                                                        <li>
-                                                            <button className="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-600"
-                                                                onClick={() => handleDeleteClick(task._id)} >
-                                                                <MdDelete className="w-4 h-4 mr-2" />
-                                                                Delete
-                                                            </button>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
+                                                    {task.tasks}
+                                                </h3>
+                                            </div>
+                                        </div>
+                                        <p className="text-gray-800 dark:text-gray-100 text-sm flex items-center mb-2">
+                                            <CiCalendar className="text-gray-900 w-6 h-6 mr-2" />
+                                            <span className="font-mono">{formatDate(task.deadline)}</span>
+                                        </p>
+                                        <p className="text-gray-800 dark:text-gray-100 text-sm flex items-center mb-2">
+                                            <CiClock1 className="text-gray-900 w-6 h-6 mr-3" />
+                                            {task.hours || "--:--"}
+                                        </p>
+                                        <p className="text-gray-800 dark:text-gray-100 text-sm ">
+                                            <span className={`inline-block px-2 py-1 rounded-lg ${task.status === 'Active' ? 'bg-blue-200 text-blue-800' : task.status === 'Expired' ? 'bg-red-200 text-red-800' : 'bg-blue-800 text-white'}`}>{task.status}</span>
+                                        </p>
+                                    </div>
 
-                            </table>
+                                    <div className="flex justify-end space-x-2 absolute bottom-5 right-5">
+                                        <button
+                                            className="flex items-center py-2 px-4 "
+                                            onClick={() => handleEditClick(task)}
+                                        >
+                                            <FiEdit className="w-6 h-6 text-blue-700" />
+                                        </button>
+                                        <button
+                                            className="flex items-center py-2 px-4 "
+                                            onClick={() => handleDeleteClick(task._id)}
+                                        >
+                                            <MdDelete className="w-6 h-6 text-blue-700" />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                         {/* Pagination */}
                         <nav className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4" aria-label="Table navigation">
@@ -413,10 +363,7 @@ const handleSubmit = async (event) => {
                                 <option value="Active">Active</option>
                                 <option value="Done">Done</option>
                             </select>
-                        </div>    
-                        
-                        
-        
+                        </div>   
                         
                         </div>
                         <button type="submit" className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none px-4 py-2 rounded-lg">
@@ -514,50 +461,7 @@ const handleSubmit = async (event) => {
                 </div>
             )}
         </div>
-    {/* <!-- Read modal --> */}
-    <div id="readProductModal" className={`${isPreviewModalOpen ? '' : 'hidden'} fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50`}>
-        <div className="relative p-4 w-full max-w-xl">
-            <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-                
-                <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Details</h3>
-                    <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white" 
-                            onClick={() => setIsPreviewModalOpen(false)}>
-                        <IoMdClose className="w-5 h-5"/>
-                        <span className="sr-only">Close modal</span>
-                    </button>
-                </div>
-                <dl>
-                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Task</dt>
-                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.tasks}</dd>
-                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Deadline</dt>
-                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && formatDate (currentPreviewedTask.deadline)}</dd>
-                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Hours</dt>
-                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.hours || "--:--"}</dd>
-                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Status</dt>
-                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400 break-all overflow-auto">{currentPreviewedTask && currentPreviewedTask.status}</dd>
-                    
-                </dl>
-                <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-3 sm:space-x-4">
-                        <button onClick={() => handleEditClick(currentPreviewedTask, true)} type="button" className="text-white inline-flex items-center bg-blue-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                            <FiEdit className="mr-1 -ml-1 w-5 h-5" />
-                            Edit
-                        </button>
-                    </div>
-                    <button type="button" 
-                        onClick={() => {
-                            handleDeleteClick(currentPreviewedTask._id); 
-                            setIsPreviewModalOpen(false);
-                        }} 
-                        className="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">
-                        < MdDelete className="w-5 h-5 mr-1.5 -ml-1" />
-                        Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+                      
 
     {/* <!-- Delete modal --> */}
     {isDeleteModalOpen && (
