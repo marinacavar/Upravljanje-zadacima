@@ -41,38 +41,40 @@ const Home = () => {
     setShowPassword(!showPassword);
   };
   const submitForm = async (data) => {
-    
     setIsSubmitting(true);
     try {
-        const response = await axios.post('http://localhost:3001/login', data);
-        console.log(response.data); 
-
-        const { id, role, username, token } = response.data;
-
-        localStorage.setItem('token', token);
-        localStorage.setItem('role', role);
-        localStorage.setItem('username', username);
-        localStorage.setItem('userId', id); 
-
-        if (role === 'admin') {
-            router.push('/admin/task');
-        } else {
-            router.push('/home/task');
-        }
-    // Display a success toast message
-    toast.success('Successfully logged in!', {
-    });
-  } catch (error) {
-  console.error("login error", error); 
+      const response = await axios.post('http://localhost:3001/login', data);
+      console.log(response.data); 
   
-
-  // Display an error toast message
-  toast.error('User with this email doesnt exist.', {
-    
-  });
-}
-  setIsSubmitting(false);
-};
+      const { id, role, username, token } = response.data;
+  
+      localStorage.setItem('token', token);
+      localStorage.setItem('role', role);
+      localStorage.setItem('username', username);
+      localStorage.setItem('userId', id); 
+  
+      if (role === 'admin') {
+        router.push('/admin/task');
+      } else {
+        router.push('/home/task');
+      }
+      
+      toast.success('Successfully logged in!');
+    } catch (error) {
+      console.error("login error", error); 
+  
+      if (error.response && error.response.status === 404) {
+        
+        toast.error('User with this email doesn\'t exist.');
+      } else if (error.response && error.response.status === 401) {
+        toast.error('Incorrect password.');
+      } else {
+        toast.error('An error occurred.');
+      }
+    }
+    setIsSubmitting(false);
+  };
+  
 
 
   const goToSignUp = () => {

@@ -83,7 +83,6 @@ exports.create = (req, res) => {
             });
         });
 };
-
 exports.login = (req, res) => {
     const { email, password } = req.body;
 
@@ -100,9 +99,6 @@ exports.login = (req, res) => {
                 const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, process.env.JWT_SECRET, {
                     expiresIn: '1h'
                 });
-                
-
-                
                 res.cookie('jwt', token, { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).json({ token, id: user.id, username: user.username,  role: user.role });
             });
         })
@@ -110,6 +106,7 @@ exports.login = (req, res) => {
             res.status(500).send({ message: "Error occurred while logging in" });
         });
 };
+
 
 
 exports.authenticateToken = (req, res, next) => {
