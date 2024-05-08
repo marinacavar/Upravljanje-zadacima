@@ -15,7 +15,7 @@ const Tasks = () => {
     const [currentTask, setCurrentTask] = useState(null);
     const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [tasksPerPage] = useState(10);
+    const [tasksPerPage] = useState(9);
     const taskRef = useRef(null);
     const [users, setUsers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');

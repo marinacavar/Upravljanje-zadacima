@@ -19,7 +19,7 @@ const myTasks = () => {
     const [currentTask, setCurrentTask] = useState(null);
     const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [tasksPerPage] = useState(10);
+    const [tasksPerPage] = useState(9);
     const taskRef = useRef(null);
     const [addSuccessMessage, setAddSuccessMessage] = useState('');
     const [users, setUsers] = useState([]);
@@ -95,14 +95,14 @@ const handleSubmit = async (event) => {
     const selectedUsers = Array.from(formData.getAll('users'));
     const usersString = selectedUsers.join(' ');
 
-    const userId = localStorage.getItem("userId"); // Retrieve the userId from local storage
+    const userId = localStorage.getItem("userId"); 
 
     const taskData = {
         tasks: formData.get('tasks'), 
         deadline: formData.get('deadline'),
         hours: formData.get('hours'),
         status: formData.get('status'),
-        userId: userId // Include userId in the task data
+        userId: userId 
     };
     console.log('Task data:', taskData);
 
