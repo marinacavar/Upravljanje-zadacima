@@ -152,9 +152,7 @@ const handleSubmit = async (event) => {
         setUpdatedUser(user); 
         setIsModalOpen(true); 
         setIsPreviewModalOpen(false);
-        setCameFromReadModal(cameFromRead);
-        
-        
+        setCameFromReadModal(cameFromRead);    
     };
     
     const handleInputChange = (event) => {

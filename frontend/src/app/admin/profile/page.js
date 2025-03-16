@@ -124,7 +124,6 @@ function Profile() {
 
 
     const handleDeleteUser = async () => {
-        // Otvorite modal umjesto prikazivanja confirm boxa
         setIsModalOpen(true);
     };
 
@@ -133,9 +132,7 @@ function Profile() {
         try {
             const userId = localStorage.getItem('userId');
             await axios.delete(`http://localhost:3001/api/users/${userId}`);
-            // Log out the user
-            localStorage.removeItem('userId');
-            // Redirect to home page
+            localStorage.removeItem('userId');-
             router.push('/');
         } catch (error) {
             console.error("Error deleting user", error);

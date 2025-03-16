@@ -5,10 +5,13 @@ import React, { useState, useEffect } from 'react';
 import { CgProfile, CgLogOut } from 'react-icons/cg';
 import { FaTasks } from 'react-icons/fa';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function Sidebar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [userData, setUserData] = useState(null);
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -35,7 +38,6 @@ export default function Sidebar() {
     router.push('/');
   };
 
-
   return (
     <div>
       <Disclosure as="nav">
@@ -49,23 +51,27 @@ export default function Sidebar() {
             </div>
             <div className="my-4 border-b border-grey-100 pb-4">
               <Link href="/home/profile">
-                <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg">
-                  <CgProfile className="text-2xl text-blue-700 group-hover:text-white" />
-                  <h3 className="text-base text-blue-900 group-hover:text-white font-semibold">
-                    {userData ? userData.username : 'Loading...'}
-                  </h3>
+                <div className={`flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg ${
+                  pathname === '/home/profile' ? 'border-l-4 border-blue-700' : ''
+                }`}>
+                  <CgProfile className={`text-2xl ${pathname === '/home/profile' ? 'text-blue-700' : 'text-blue-700'} group-hover:text-white`} />
+                  <h3 className={`text-base text-blue-900 group-hover:text-white font-semibold`}>{userData ? userData.username : 'Loading...'}</h3>
                 </div>
               </Link>
               <Link href="/home/task">
-                <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg">
-                  <FaTasks className="text-2xl text-blue-700 group-hover:text-white" />
-                  <h3 className="text-base text-blue-900 group-hover:text-white font-semibold">Task</h3>
+                <div className={`flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg ${
+                  pathname === '/home/task' ? 'border-l-4 border-blue-700' : ''
+                }`}>
+                  <FaTasks className={`text-2xl ${pathname === '/home/task' ? 'text-blue-700' : 'text-blue-700'} group-hover:text-white`} />
+                  <h3 className={`text-base text-blue-900 group-hover:text-white font-semibold`}>Task</h3>
                 </div>
               </Link>
               <Link href="/home/myTask">
-                <div className="flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg">
-                  <FaTasks className="text-2xl text-blue-700 group-hover:text-white" />
-                  <h3 className="text-base text-blue-900 group-hover:text-white font-semibold">My Tasks</h3>
+                <div className={`flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-700 p-2 rounded-md group cursor-pointer hover:shadow-lg ${
+                  pathname === '/home/myTask' ? 'border-l-4 border-blue-700' : ''
+                }`}>
+                  <FaTasks className={`text-2xl ${pathname === '/home/myTask' ? 'text-blue-700' : 'text-blue-700'} group-hover:text-white`} />
+                  <h3 className={`text-base text-blue-900 group-hover:text-white font-semibold`}>My Tasks</h3>
                 </div>
               </Link>
             </div>
